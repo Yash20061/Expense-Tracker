@@ -28,16 +28,65 @@ main{
 .login-main-text{
   margin-left: 50px;
   margin-top: 60px;
+  margin-bottom: 45px;
 }
 
 .credentials{
-  
+  margin-bottom: 20px;
 }
 
 .credentials input{
   display: block;
-  margin-top: 20px;
-  height: 30px;
+  margin-top: 25px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.3); 
   width: 80%;
   margin-left: 30px;
+  font-size: 0.75rem;
+  padding-left: 10px;
+}
+
+.below-pass{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-left: 34px;
+  font-size: 0.8rem;
+  margin-bottom: 30px;
+}
+
+.remember-me{
+  display: flex;
+}
+
+.remember-text{
+  margin-left: 10px;
+}
+
+.signin-button{
+  margin-bottom: 80px;
+}
+
+.sign-in{
+  height: 45px;
+  margin-left: 30px;
+  width: 83%;
+  font-size: 1.3rem;
+  border: none;
+  background-color: #27548A;
+  color: white;
+  border-radius: 8px;
+}
+
+.below-button{
+  display: flex;
+  width: 80%;
+  margin-left: 35px;
+  font-size: 0.75rem;
+}
+
+.below-button p{
+  margin-right: 10px;
 }
