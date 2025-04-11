@@ -39,7 +39,7 @@ main{
   display: block;
   margin-top: 25px;
   height: 40px;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid rgba(0,0,0,0.3); 
   width: 80%;
   margin-left: 30px;
@@ -66,7 +66,7 @@ main{
 }
 
 .signin-button{
-
+  margin-bottom: 80px;
 }
 
 .sign-in{
@@ -74,4 +74,19 @@ main{
   margin-left: 30px;
   width: 83%;
   font-size: 1.3rem;
+  border: none;
+  background-color: #27548A;
+  color: white;
+  border-radius: 8px;
+}
+
+.below-button{
+  display: flex;
+  width: 80%;
+  margin-left: 35px;
+  font-size: 0.75rem;
+}
+
+.below-button p{
+  margin-right: 10px;
 }
