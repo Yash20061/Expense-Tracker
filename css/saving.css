@@ -24,14 +24,14 @@ body {
   line-height: 1.4;
 }
 
-/* Layout */
+
 .dashboard-container {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 100vh;
 }
 
-/* Sidebar */
+
 .sidebar {
   background: white;
   border-right: 1px solid var(--medium-gray);
@@ -86,7 +86,7 @@ body {
   color: var(--primary-color);
 }
 
-/* Main Content */
+
 .main-content {
   padding: 1.5rem;
 }
@@ -144,7 +144,7 @@ body {
   cursor: pointer;
 }
 
-/* Budget & Savings Specific Styles */
+
 .budget-header {
   display: flex;
   justify-content: space-between;
@@ -318,7 +318,7 @@ body {
   border-radius: 2px;
 }
 
-/* Savings Section */
+
 .savings-card {
   grid-column: span 12;
 }
@@ -376,7 +376,7 @@ body {
   color: var(--dark-gray);
 }
 
-/* Quick Add (Same as dashboard) */
+
 .quick-add {
   position: fixed;
   bottom: 2rem;
