@@ -269,16 +269,314 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Income Management page loaded');
+   document.addEventListener('DOMContentLoaded', function() {
+  // DOM Elements
+  const addIncomeBtn = document.querySelector('.btn-primary');
+  const exportBtn = document.querySelector('.btn-outline');
+  const quickAddBtn = document.querySelector('.add-btn');
+  const notificationBtn = document.querySelector('.notification-btn');
+  const filterSelects = document.querySelectorAll('.filter-select');
+  const incomeTable = document.querySelector('.income-table tbody');
+  const paginationBtns = document.querySelectorAll('.page-btn');
+  const userAvatar = document.querySelector('.user-avatar');
+  const statCards = document.querySelectorAll('.stat-card');
+
+  // Sample income data
+  let incomes = [
+    {
+      id: 1,
+      date: 'Apr 5, 2024',
+      source: 'Salary',
+      icon: 'fa-briefcase',
+      description: 'Monthly salary from company',
+      amount: 20000,
+      type: 'salary'
+    },
+    {
+      id: 2,
+      date: 'Apr 10, 2024',
+      source: 'Freelance',
+      icon: 'fa-laptop-code',
+      description: 'Web development project',
+      amount: 5000,
+      type: 'freelance'
+    },
+    {
+      id: 3,
+      date: 'Mar 30, 2024',
+      source: 'Investments',
+      icon: 'fa-chart-line',
+      description: 'Stock dividends',
+      amount: 2500,
+      type: 'investments'
+    },
+    {
+      id: 4,
+      date: 'Mar 15, 2024',
+      source: 'Other',
+      icon: 'fa-gift',
+      description: 'Birthday gift',
+      amount: 1000,
+      type: 'other'
+    }
+  ];
+
+  // Initialize the app
+  function init() {
+    renderIncomes();
+    updateStats();
+    setupEventListeners();
+  }
+
+  // Render incomes to the table
+  function renderIncomes(filteredData = incomes) {
+    incomeTable.innerHTML = '';
+    
+    filteredData.forEach(income => {
+      const row = document.createElement('tr');
       
-      // Example of dynamic content loading
-      // fetch('/api/income')
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     // Update the table with real data
-      //   });
+      row.innerHTML = `
+        <td>${income.date}</td>
+        <td>
+          <div class="income-source">
+            <div class="source-icon">
+              <i class="fas ${income.icon}"></i>
+            </div>
+            <div>${income.source}</div>
+          </div>
+        </td>
+        <td>${income.description}</td>
+        <td class="income-amount">+₹${income.amount.toLocaleString('en-IN')}</td>
+        <td>
+          <div class="income-actions-cell">
+            <button class="action-btn edit-btn" data-id="${income.id}" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete-btn" data-id="${income.id}" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      
+      incomeTable.appendChild(row);
     });
+
+    // Add event listeners to the new buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', handleEditIncome);
+    });
+    
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', handleDeleteIncome);
+    });
+  }
+
+  // Filter incomes based on selected filters
+  function filterIncomes() {
+    const dateRange = document.querySelector('.filter-select:nth-of-type(1)').value;
+    const incomeType = document.querySelector('.filter-select:nth-of-type(2)').value;
+    
+    let filtered = [...incomes];
+    
+    // Filter by date range (simplified for demo)
+    if (dateRange !== 'Last 30 days') {
+      // In a real app, implement actual date filtering
+      filtered = filtered.filter(i => i.date.includes('Apr'));
+    }
+    
+    // Filter by income type
+    if (incomeType !== 'All Income') {
+      const typeFilter = incomeType.toLowerCase();
+      filtered = filtered.filter(i => i.type === typeFilter);
+    }
+    
+    renderIncomes(filtered);
+    updateStats(filtered);
+  }
+
+  // Update the stat cards
+  function updateStats(filteredData = incomes) {
+    const currentMonthTotal = filteredData
+      .filter(i => i.date.includes('Apr'))
+      .reduce((sum, income) => sum + income.amount, 0);
+    
+    const lastMonthTotal = incomes
+      .filter(i => i.date.includes('Mar'))
+      .reduce((sum, income) => sum + income.amount, 0);
+    
+    const avgMonthlyIncome = ((currentMonthTotal + lastMonthTotal) / 2).toFixed(2);
+    const growthPercentage = ((currentMonthTotal - lastMonthTotal) / lastMonthTotal * 100).toFixed(1);
+    
+    // Update stat cards
+    statCards[0].querySelector('.stat-value').textContent = `₹${currentMonthTotal.toLocaleString('en-IN')}`;
+    statCards[1].querySelector('.stat-value').textContent = `₹${avgMonthlyIncome.toLocaleString('en-IN')}`;
+    
+    const changeElement = statCards[0].querySelector('.stat-change');
+    changeElement.querySelector('span').textContent = `${Math.abs(growthPercentage)}% from last month`;
+    
+    if (growthPercentage >= 0) {
+      changeElement.classList.remove('negative');
+      changeElement.querySelector('i').className = 'fas fa-arrow-up';
+    } else {
+      changeElement.classList.add('negative');
+      changeElement.querySelector('i').className = 'fas fa-arrow-down';
+    }
+  }
+
+  // Handle add income
+  function handleAddIncome() {
+    const incomeTypes = [
+      { name: 'Salary', icon: 'fa-briefcase', type: 'salary' },
+      { name: 'Freelance', icon: 'fa-laptop-code', type: 'freelance' },
+      { name: 'Investments', icon: 'fa-chart-line', type: 'investments' },
+      { name: 'Other', icon: 'fa-gift', type: 'other' }
+    ];
+    
+    // Create a simple form (in a real app, use a modal)
+    const source = prompt('Enter income source (Salary, Freelance, Investments, Other):') || 'Other';
+    const matchedType = incomeTypes.find(t => t.name.toLowerCase() === source.toLowerCase()) || incomeTypes[3];
+    
+    const newIncome = {
+      id: incomes.length + 1,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      source: matchedType.name,
+      icon: matchedType.icon,
+      description: prompt('Enter description:') || 'New income',
+      amount: parseFloat(prompt('Enter amount:')) || 0,
+      type: matchedType.type
+    };
+    
+    incomes.unshift(newIncome);
+    renderIncomes();
+    updateStats();
+    showNotification('Income added successfully!');
+  }
+
+  // Handle edit income
+  function handleEditIncome(e) {
+    const id = parseInt(e.currentTarget.getAttribute('data-id'));
+    const income = incomes.find(i => i.id === id);
+    
+    if (income) {
+      income.description = prompt('Edit description:', income.description) || income.description;
+      income.amount = parseFloat(prompt('Edit amount:', income.amount)) || income.amount;
+      
+      renderIncomes();
+      updateStats();
+      showNotification('Income updated successfully!');
+    }
+  }
+
+  // Handle delete income
+  function handleDeleteIncome(e) {
+    if (confirm('Are you sure you want to delete this income record?')) {
+      const id = parseInt(e.currentTarget.getAttribute('data-id'));
+      incomes = incomes.filter(i => i.id !== id);
+      renderIncomes();
+      updateStats();
+      showNotification('Income deleted successfully!');
+    }
+  }
+
+  // Handle export
+  function handleExport() {
+    // In a real app, this would generate a CSV or PDF
+    alert('Export functionality would generate a file with all income records in this view.');
+  }
+
+  // Handle pagination
+  function handlePagination(e) {
+    // Remove active class from all buttons
+    paginationBtns.forEach(btn => btn.classList.remove('active'));
+    
+    // Add active class to clicked button
+    if (!e.currentTarget.querySelector('i')) {
+      e.currentTarget.classList.add('active');
+    }
+    
+    // In a real app, this would load the appropriate page of data
+    showNotification('Pagination would load different data in a real app.');
+  }
+
+  // Show notification
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.add('fade-out');
+      setTimeout(() => notification.remove(), 500);
+    }, 3000);
+  }
+
+  // Setup all event listeners
+  function setupEventListeners() {
+    // Add income buttons
+    addIncomeBtn.addEventListener('click', handleAddIncome);
+    quickAddBtn.addEventListener('click', handleAddIncome);
+    
+    // Export button
+    exportBtn.addEventListener('click', handleExport);
+    
+    // Notification button
+    notificationBtn.addEventListener('click', () => {
+      showNotification('You have 3 new notifications');
+    });
+    
+    // Filter changes
+    filterSelects.forEach(select => {
+      select.addEventListener('change', filterIncomes);
+    });
+    
+    // Pagination buttons
+    paginationBtns.forEach(btn => {
+      btn.addEventListener('click', handlePagination);
+    });
+    
+    // User avatar click
+    userAvatar.addEventListener('click', () => {
+      showNotification('User menu would appear here');
+    });
+  }
+
+  // Initialize the application
+  init();
+
+  // Add some CSS for notifications
+  const style = document.createElement('style');
+  style.textContent = `
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      z-index: 1000;
+      animation: slideIn 0.5s forwards;
+    }
+    
+    .notification.fade-out {
+      animation: fadeOut 0.5s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+});
   </script>
 </body>
 </html>

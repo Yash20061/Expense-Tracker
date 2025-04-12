@@ -8,6 +8,7 @@
     function insertExample(question) {
       chatbotInput.value = question;
       chatbotInput.focus();
+      
     }
 
     function addMessage(text, sender) {
