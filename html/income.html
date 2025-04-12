@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpensePro | Income Management</title>
+  <!-- Same styles as dashboard -->
+  <link rel="stylesheet" href="/css/income.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar (Same as dashboard but with Budget active) -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-wallet"></i>
+        <span>ExpensePro</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="expense-tracker.html" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="saving.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Budget & Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Income Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reminder.html" class="nav-link">
+            <i class="fas fa-bell"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reports.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Shared_Expance.html" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Shared</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Chatbot.html" class="nav-link">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content - Income Management -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Income Management</h1>
+        <div class="user-menu">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </div>
+
+      <div class="income-header">
+        <div class="income-filters">
+          <div class="filter-group">
+            <label class="filter-label">Date Range</label>
+            <select class="filter-select">
+              <option>Last 30 days</option>
+              <option>This month</option>
+              <option>Last month</option>
+              <option>Custom range</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Income Type</label>
+            <select class="filter-select">
+              <option>All Income</option>
+              <option>Salary</option>
+              <option>Freelance</option>
+              <option>Investments</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="income-actions">
+          <button class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Income
+          </button>
+          <button class="btn btn-outline">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+      </div>
+
+      <div class="income-stats">
+        <div class="stat-card">
+          <div class="stat-title">Total Income (This Month)</div>
+          <div class="stat-value">₹25,000</div>
+          <div class="stat-change">
+            <i class="fas fa-arrow-up"></i>
+            <span>10% from last month</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Average Monthly Income</div>
+          <div class="stat-value">₹22,500</div>
+          <div class="stat-change">
+            <i class="fas fa-arrow-up"></i>
+            <span>5% growth</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Projected Savings</div>
+          <div class="stat-value">₹4,200</div>
+          <div class="stat-change negative">
+            <i class="fas fa-arrow-down"></i>
+            <span>2% decrease</span>
+          </div>
+        </div>
+      </div>
+
+      <table class="income-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Apr 5, 2024</td>
+            <td>
+              <div class="income-source">
+                <div class="source-icon">
+                  <i class="fas fa-briefcase"></i>
+                </div>
+                <div>Salary</div>
+              </div>
+            </td>
+            <td>Monthly salary from company</td>
+            <td class="income-amount">+₹20,000</td>
+            <td>
+              <div class="income-actions-cell">
+                <button class="action-btn" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Apr 10, 2024</td>
+            <td>
+              <div class="income-source">
+                <div class="source-icon">
+                  <i class="fas fa-laptop-code"></i>
+                </div>
+                <div>Freelance</div>
+              </div>
+            </td>
+            <td>Web development project</td>
+            <td class="income-amount">+₹5,000</td>
+            <td>
+              <div class="income-actions-cell">
+                <button class="action-btn" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Mar 30, 2024</td>
+            <td>
+              <div class="income-source">
+                <div class="source-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div>Investments</div>
+              </div>
+            </td>
+            <td>Stock dividends</td>
+            <td class="income-amount">+₹2,500</td>
+            <td>
+              <div class="income-actions-cell">
+                <button class="action-btn" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Mar 15, 2024</td>
+            <td>
+              <div class="income-source">
+                <div class="source-icon">
+                  <i class="fas fa-gift"></i>
+                </div>
+                <div>Other</div>
+              </div>
+            </td>
+            <td>Birthday gift</td>
+            <td class="income-amount">+₹1,000</td>
+            <td>
+              <div class="income-actions-cell">
+                <button class="action-btn" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <!-- Quick Add Button (Same as dashboard) -->
+      <div class="quick-add">
+        <button class="add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Income Management page loaded');
+      
+      // Example of dynamic content loading
+      // fetch('/api/income')
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     // Update the table with real data
+      //   });
+    });
+  </script>
+</body>
+</html>

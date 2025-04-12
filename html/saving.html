@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpensePro | Budget & Savings</title>
+  <!-- Same styles as dashboard -->
+  <link rel="stylesheet" href="/css/saving.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Updated Sidebar with renamed items -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-wallet"></i>
+        <span>ExpensePro</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="expense-tracker.html" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="saving.html" class="nav-link active">
+            <i class="fas fa-chart-bar"></i>
+            <span>Budget & Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="income.html" class="nav-link">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Income Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reminder.html" class="nav-link">
+            <i class="fas fa-bell"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reports.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Shared_Expance.html" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Shared</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Chatbot.html" class="nav-link">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content - Budget & Savings -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Budget & Savings</h1>
+        <div class="user-menu">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </div>
+
+      <div class="budget-header">
+        <div>
+          <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">April 2024 Budget</h2>
+          <p style="font-size: 0.85rem; color: var(--dark-gray);">Track your spending against your budget goals</p>
+        </div>
+        <div class="budget-actions">
+          <button class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Budget
+          </button>
+          <button class="btn btn-outline">
+            <i class="fas fa-cog"></i> Settings
+          </button>
+        </div>
+      </div>
+
+      <div class="budget-grid">
+        <!-- Budget Overview -->
+        <div class="budget-card budget-overview">
+          <div class="budget-card-header">
+            <h2 class="budget-card-title">Monthly Budget Overview</h2>
+            <div class="budget-card-actions">
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="budget-progress">
+            <div class="progress-bar warning" style="width: 78%"></div>
+          </div>
+          <div class="budget-details">
+            <span>₹15,600 spent</span>
+            <span>₹20,000 limit</span>
+          </div>
+          <div class="budget-details">
+            <span>₹4,400 remaining</span>
+            <span>₹2,200/day suggested</span>
+          </div>
+          <div class="chart-placeholder" style="height: 200px; margin-top: 1rem;">
+            [Budget vs Actual Spending Chart]
+          </div>
+        </div>
+
+        <!-- Budget Categories -->
+        <div class="budget-card budget-categories">
+          <div class="budget-card-header">
+            <h2 class="budget-card-title">Budget by Category</h2>
+            <div class="budget-card-actions">
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="budget-category">
+            <div class="category-info">
+              <div class="category-icon">
+                <i class="fas fa-utensils"></i>
+              </div>
+              <div>
+                <div class="category-name">Food</div>
+                <div class="category-progress">
+                  <div class="category-progress-bar" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="category-amount">₹4,250/₹5,000</div>
+          </div>
+          <div class="budget-category">
+            <div class="category-info">
+              <div class="category-icon">
+                <i class="fas fa-home"></i>
+              </div>
+              <div>
+                <div class="category-name">Housing</div>
+                <div class="category-progress">
+                  <div class="category-progress-bar" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="category-amount">₹8,000/₹8,000</div>
+          </div>
+          <div class="budget-category">
+            <div class="category-info">
+              <div class="category-icon">
+                <i class="fas fa-gas-pump"></i>
+              </div>
+              <div>
+                <div class="category-name">Transport</div>
+                <div class="category-progress">
+                  <div class="category-progress-bar" style="width: 60%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="category-amount">₹1,200/₹2,000</div>
+          </div>
+          <div class="budget-category">
+            <div class="category-info">
+              <div class="category-icon">
+                <i class="fas fa-shopping-bag"></i>
+              </div>
+              <div>
+                <div class="category-name">Shopping</div>
+                <div class="category-progress">
+                  <div class="category-progress-bar warning" style="width: 75%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="category-amount">₹1,500/₹2,000</div>
+          </div>
+        </div>
+
+        <!-- Savings Goals -->
+        <div class="budget-card savings-card">
+          <div class="budget-card-header">
+            <h2 class="budget-card-title">Savings Goals</h2>
+            <div class="budget-card-actions">
+              <button><i class="fas fa-plus"></i> Add Goal</button>
+            </div>
+          </div>
+          <div class="savings-goals">
+            <div class="goal-card">
+              <div class="goal-header">
+                <div class="goal-title">Emergency Fund</div>
+                <i class="fas fa-shield-alt" style="color: var(--primary-color);"></i>
+              </div>
+              <div class="goal-amount">₹12,500/₹50,000</div>
+              <div class="goal-progress">
+                <div class="goal-progress-bar" style="width: 25%"></div>
+              </div>
+              <div class="goal-details">
+                <span>25% completed</span>
+                <span>₹37,500 remaining</span>
+              </div>
+            </div>
+            <div class="goal-card">
+              <div class="goal-header">
+                <div class="goal-title">Vacation</div>
+                <i class="fas fa-umbrella-beach" style="color: var(--warning-color);"></i>
+              </div>
+              <div class="goal-amount">₹7,000/₹20,000</div>
+              <div class="goal-progress">
+                <div class="goal-progress-bar" style="width: 35%"></div>
+              </div>
+              <div class="goal-details">
+                <span>35% completed</span>
+                <span>₹13,000 remaining</span>
+              </div>
+            </div>
+            <div class="goal-card">
+              <div class="goal-header">
+                <div class="goal-title">New Laptop</div>
+                <i class="fas fa-laptop" style="color: var(--dark-gray);"></i>
+              </div>
+              <div class="goal-amount">₹15,000/₹60,000</div>
+              <div class="goal-progress">
+                <div class="goal-progress-bar" style="width: 25%"></div>
+              </div>
+              <div class="goal-details">
+                <span>25% completed</span>
+                <span>₹45,000 remaining</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add Button (Same as dashboard) -->
+      <div class="quick-add">
+        <button class="add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Budget & Savings page loaded');
+      
+      // Example of dynamic content loading
+      // fetch('/api/budget-data')
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     // Update the UI with real data
+      //   });
+    });
+  </script>
+</body>
+</html>

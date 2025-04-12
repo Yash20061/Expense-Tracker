@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpensePro | Reports</title>
+  <link rel="stylesheet" href="/css/reports.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-wallet"></i>
+        <span>ExpensePro</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="expense-tracker.html" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="saving.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Budget & Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="income.html" class="nav-link">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Income Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reminder.html" class="nav-link">
+            <i class="fas fa-bell"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reports.html" class="nav-link active">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Shared_Expance.html" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Shared</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Chatbot.html" class="nav-link">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Reports</h1>
+        <div class="user-menu">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </div>
+
+      <!-- Report Filters -->
+      <div class="report-filters">
+        <div class="filter-group">
+          <select class="filter-select">
+            <option>Monthly Report</option>
+            <option>Annual Report</option>
+            <option>Category Report</option>
+            <option>Income vs Expense</option>
+          </select>
+          <select class="filter-select">
+            <option>April 2024</option>
+            <option>March 2024</option>
+            <option>February 2024</option>
+            <option>Custom Range</option>
+          </select>
+        </div>
+        <button class="export-btn">
+          <i class="fas fa-file-export"></i>
+          <span>Export Report</span>
+        </button>
+      </div>
+
+      <!-- Report Cards -->
+      <div class="report-cards">
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="report-title">Spending Trends</h3>
+          <p class="report-desc">View your spending patterns over time</p>
+        </div>
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <h3 class="report-title">Category Breakdown</h3>
+          <p class="report-desc">See where your money is going</p>
+        </div>
+        <div class="report-card">
+          <div class="report-icon">
+            <i class="fas fa-balance-scale"></i>
+          </div>
+          <h3 class="report-title">Income vs Expenses</h3>
+          <p class="report-desc">Compare your income and spending</p>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">Monthly Spending</div>
+            <div class="chart-period">Jan 2024 - Apr 2024</div>
+          </div>
+          <div class="chart-container">
+            <!-- Chart would be rendered here with a library like Chart.js -->
+            <div style="display: flex; align-items: flex-end; height: 100%; gap: 10px; padding-top: 20px;">
+              <div style="flex: 1; background-color: var(--accent-color); height: 40%; border-radius: 4px;"></div>
+              <div style="flex: 1; background-color: var(--accent-color); height: 60%; border-radius: 4px;"></div>
+              <div style="flex: 1; background-color: var(--accent-color); height: 80%; border-radius: 4px;"></div>
+              <div style="flex: 1; background-color: var(--accent-color); height: 65%; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">Spending by Category</div>
+            <div class="chart-period">April 2024</div>
+          </div>
+          <div class="chart-container">
+            <!-- Pie chart would be rendered here -->
+            <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(
+              var(--primary-color) 0% 25%, 
+              var(--success-color) 25% 45%, 
+              var(--accent-color) 45% 65%, 
+              #f59e0b 65% 80%, 
+              var(--error-color) 80% 100%
+            ); margin: 20px auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Transactions -->
+      <div class="report-table-container">
+        <div class="table-header">
+          <div class="table-title">Detailed Transactions</div>
+        </div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apr 15, 2024</td>
+              <td><span class="category-badge">Food & Dining</span></td>
+              <td>Dinner at Subway</td>
+              <td class="amount-expense">-₹500</td>
+              <td>Expense</td>
+            </tr>
+            <tr>
+              <td>Apr 14, 2024</td>
+              <td><span class="category-badge">Transportation</span></td>
+              <td>Petrol for scooter</td>
+              <td class="amount-expense">-₹350</td>
+              <td>Expense</td>
+            </tr>
+            <tr>
+              <td>Apr 12, 2024</td>
+              <td><span class="category-badge">Shopping</span></td>
+              <td>New headphones</td>
+              <td class="amount-expense">-₹1,250</td>
+              <td>Expense</td>
+            </tr>
+            <tr>
+              <td>Apr 10, 2024</td>
+              <td><span class="category-badge">Salary</span></td>
+              <td>Monthly paycheck</td>
+              <td class="amount-income">+₹25,000</td>
+              <td>Income</td>
+            </tr>
+            <tr>
+              <td>Apr 5, 2024</td>
+              <td><span class="category-badge">Housing</span></td>
+              <td>Electricity bill</td>
+              <td class="amount-expense">-₹800</td>
+              <td>Expense</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Add Button -->
+      <div class="quick-add">
+        <button class="add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Reports page loaded');
+      
+      // Example of how you might handle report card clicks
+      document.querySelectorAll('.report-card').forEach(card => {
+        card.addEventListener('click', function() {
+          // This would load the specific report
+          console.log('Report card clicked:', this.querySelector('.report-title').textContent);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

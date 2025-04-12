@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpensePro | Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-wallet"></i>
+        <span>ExpensePro</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="expense-tracker.html" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="saving.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Budget & Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="income.html" class="nav-link">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Income Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reminder.html" class="nav-link">
+            <i class="fas fa-bell"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reports.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Shared_Expance.html" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Shared</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Chatbot.html" class="nav-link">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Dashboard</h1>
+        <div class="user-menu">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Balance Summary -->
+        <div class="card balance-summary">
+          <div class="card-header">
+            <h2 class="card-title">Available Balance</h2>
+          </div>
+          <div class="balance-amount">₹24,850</div>
+          <div class="balance-change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>₹2,150 (12%) from last month</span>
+          </div>
+        </div>
+
+        <!-- Budget Status -->
+        <div class="card budget-status">
+          <div class="card-header">
+            <h2 class="card-title">Monthly Budget</h2>
+            <div class="card-actions">
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="budget-progress">
+            <div class="progress-bar warning" style="width: 78%"></div>
+          </div>
+          <div class="budget-details">
+            <span>₹15,600 spent</span>
+            <span>₹20,000 limit</span>
+          </div>
+          <div class="budget-details">
+            <span>₹4,400 remaining</span>
+            <span>₹2,200/day suggested</span>
+          </div>
+        </div>
+
+        <!-- Recent Expenses -->
+        <div class="card recent-expenses">
+          <div class="card-header">
+            <h2 class="card-title">Recent Expenses</h2>
+            <div class="card-actions">
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-info">
+              <div class="expense-icon">
+                <i class="fas fa-utensils"></i>
+              </div>
+              <div class="expense-details">
+                <h4>Dinner at Domino's</h4>
+                <p>Yesterday • Food</p>
+              </div>
+            </div>
+            <div class="expense-amount">-₹350</div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-info">
+              <div class="expense-icon">
+                <i class="fas fa-gas-pump"></i>
+              </div>
+              <div class="expense-details">
+                <h4>Petrol</h4>
+                <p>Apr 10 • Transport</p>
+              </div>
+            </div>
+            <div class="expense-amount">-₹500</div>
+          </div>
+          <div class="expense-item">
+            <div class="expense-info">
+              <div class="expense-icon">
+                <i class="fas fa-shopping-bag"></i>
+              </div>
+              <div class="expense-details">
+                <h4>Amazon Purchase</h4>
+                <p>Apr 9 • Shopping</p>
+              </div>
+            </div>
+            <div class="expense-amount">-₹1,250</div>
+          </div>
+        </div>
+
+        <!-- Spending Overview -->
+        <div class="card spending-overview">
+          <div class="card-header">
+            <h2 class="card-title">Spending Overview</h2>
+            <div class="card-actions">
+              <button>Week</button>
+              <button>Month</button>
+              <button>Year</button>
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="chart-placeholder">
+            [Spending Chart Would Appear Here]
+          </div>
+        </div>
+
+        <!-- Smart Reminders -->
+        <div class="card smart-reminders">
+          <div class="card-header">
+            <h2 class="card-title">Smart Reminders</h2>
+            <div class="card-actions">
+              <button><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+          </div>
+          <div class="reminder-item">
+            <p class="reminder-message">You usually spend ₹200 on Sundays. Today is Sunday.</p>
+            <div class="reminder-meta">
+              <i class="fas fa-clock"></i>
+              <span>Today • Habit</span>
+            </div>
+            <div class="reminder-actions">
+              <button>Set Budget Limit</button>
+              <button>Dismiss</button>
+            </div>
+          </div>
+          <div class="reminder-item">
+            <p class="reminder-message">Internet bill payment due in 2 days (₹800)</p>
+            <div class="reminder-meta">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Apr 15 • Bill</span>
+            </div>
+            <div class="reminder-actions">
+              <button>Pay Now</button>
+              <button>Remind Later</button>
+            </div>
+          </div>
+          <div class="reminder-item">
+            <p class="reminder-message">You've spent ₹700 on food this week (usual: ₹500)</p>
+            <div class="reminder-meta">
+              <i class="fas fa-chart-line"></i>
+              <span>Weekly Summary</span>
+            </div>
+            <div class="reminder-actions">
+              <button>View Details</button>
+              <button>Dismiss</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expense Memory -->
+        <div class="card expense-memory">
+          <div class="memory-header">
+            <h2 class="memory-title">Expense Memory</h2>
+            <div class="memory-date">April 2024</div>
+          </div>
+          <div class="memory-card">
+            <p class="memory-message">Last Friday at 8PM, you spent ₹350 on dinner at Domino's, Nadiad.</p>
+            <p class="memory-details">April 5 • Food • #friends</p>
+          </div>
+          <div class="memory-card">
+            <p class="memory-message">On this day last month, you spent ₹1,200 at Amazon for electronics.</p>
+            <p class="memory-details">March 11 • Shopping • #gadgets</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add Button -->
+      <div class="quick-add">
+        <button class="add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // In a real app, this would fetch data from your backend API
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Dashboard loaded');
+      
+      // Example of dynamic content loading
+      // fetch('/api/dashboard-data')
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     // Update the UI with real data
+      //   });
+    });
+  </script>
+</body>
+</html>

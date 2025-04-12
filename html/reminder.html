@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpensePro | Reminders</title>
+  <link rel="stylesheet" href="/css/reminder.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-wallet"></i>
+        <span>ExpensePro</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="expense-tracker.html" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="saving.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Budget & Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="income.html" class="nav-link">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Income Management</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-bell"></i>
+            <span>Reminders</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="reports.html" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Shared_Expance.html" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Shared</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="Chatbot.html" class="nav-link">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Reminders</h1>
+        <div class="user-menu">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </div>
+
+      <div class="reminder-actions">
+        <div class="filter-group">
+          <select class="filter-select">
+            <option>All Categories</option>
+            <option>Bills</option>
+            <option>Subscriptions</option>
+            <option>Payments</option>
+          </select>
+          <select class="filter-select">
+            <option>Upcoming</option>
+            <option>Completed</option>
+            <option>All</option>
+          </select>
+        </div>
+        <button class="add-reminder-btn" id="addReminderBtn">
+          <i class="fas fa-plus"></i>
+          <span>Add Reminder</span>
+        </button>
+      </div>
+
+      <div class="upcoming-section">
+        <h2 class="section-title">
+          <i class="fas fa-clock"></i>
+          <span>Upcoming Reminders</span>
+        </h2>
+        <div class="reminder-cards">
+          <div class="reminder-card">
+            <div class="reminder-checkbox">
+              <input type="checkbox" id="reminder1">
+            </div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">Pay electricity bill</h3>
+              <div class="reminder-meta">
+                <div class="reminder-date">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Due May 20, 2024</span>
+                </div>
+                <div class="reminder-category">Bills</div>
+                <div class="reminder-amount">₹850</div>
+              </div>
+            </div>
+            <div class="reminder-actions">
+              <button class="action-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="reminder-card">
+            <div class="reminder-checkbox">
+              <input type="checkbox" id="reminder2">
+            </div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">Netflix subscription</h3>
+              <div class="reminder-meta">
+                <div class="reminder-date">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Due May 25, 2024</span>
+                </div>
+                <div class="reminder-category">Subscriptions</div>
+                <div class="reminder-amount">₹649</div>
+              </div>
+            </div>
+            <div class="reminder-actions">
+              <button class="action-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="reminder-card">
+            <div class="reminder-checkbox">
+              <input type="checkbox" id="reminder3">
+            </div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">Credit card payment</h3>
+              <div class="reminder-meta">
+                <div class="reminder-date">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Due June 1, 2024</span>
+                </div>
+                <div class="reminder-category">Payments</div>
+                <div class="reminder-amount">₹12,500</div>
+              </div>
+            </div>
+            <div class="reminder-actions">
+              <button class="action-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="completed-section">
+        <h2 class="section-title">
+          <i class="fas fa-check-circle"></i>
+          <span>Completed Reminders</span>
+        </h2>
+        <div class="reminder-cards">
+          <div class="reminder-card completed">
+            <div class="reminder-checkbox">
+              <input type="checkbox" id="reminder4" checked>
+            </div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">Rent payment</h3>
+              <div class="reminder-meta">
+                <div class="reminder-date">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Due May 1, 2024</span>
+                </div>
+                <div class="reminder-category">Housing</div>
+                <div class="reminder-amount">₹15,000</div>
+              </div>
+            </div>
+            <div class="reminder-actions">
+              <button class="action-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="reminder-card completed">
+            <div class="reminder-checkbox">
+              <input type="checkbox" id="reminder5" checked>
+            </div>
+            <div class="reminder-content">
+              <h3 class="reminder-title">Internet bill</h3>
+              <div class="reminder-meta">
+                <div class="reminder-date">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Due May 5, 2024</span>
+                </div>
+                <div class="reminder-category">Bills</div>
+                <div class="reminder-amount">₹800</div>
+              </div>
+            </div>
+            <div class="reminder-actions">
+              <button class="action-btn"><i class="fas fa-edit"></i></button>
+              <button class="action-btn"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add Button -->
+      <div class="quick-add">
+        <button class="add-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Reminders page loaded');
+      
+      // Handle checkbox changes
+      document.querySelectorAll('.reminder-checkbox input').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const card = this.closest('.reminder-card');
+          if (this.checked) {
+            card.classList.add('completed');
+          } else {
+            card.classList.remove('completed');
+          }
+        });
+      });
+
+      // Add reminder button click handler
+      document.getElementById('addReminderBtn').addEventListener('click', function() {
+        // In a real app, this would show a modal to add a new reminder
+        console.log('Add reminder button clicked');
+      });
+    });
+  </script>
+</body>
+</html>
