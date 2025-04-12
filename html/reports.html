@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar -->
+
     <div class="sidebar">
       <div class="logo">
         <i class="fas fa-wallet"></i>
@@ -73,7 +73,7 @@
       </ul>
     </div>
 
-    <!-- Main Content -->
+
     <div class="main-content">
       <div class="header">
         <h1 class="page-title">Reports</h1>
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <!-- Report Filters -->
+     
       <div class="report-filters">
         <div class="filter-group">
           <select class="filter-select">
@@ -108,7 +108,6 @@
         </button>
       </div>
 
-      <!-- Report Cards -->
       <div class="report-cards">
         <div class="report-card">
           <div class="report-icon">
@@ -133,7 +132,7 @@
         </div>
       </div>
 
-      <!-- Charts Section -->
+
       <div class="charts-section">
         <div class="chart-card">
           <div class="chart-header">
@@ -141,7 +140,7 @@
             <div class="chart-period">Jan 2024 - Apr 2024</div>
           </div>
           <div class="chart-container">
-            <!-- Chart would be rendered here with a library like Chart.js -->
+  
             <div style="display: flex; align-items: flex-end; height: 100%; gap: 10px; padding-top: 20px;">
               <div style="flex: 1; background-color: var(--accent-color); height: 40%; border-radius: 4px;"></div>
               <div style="flex: 1; background-color: var(--accent-color); height: 60%; border-radius: 4px;"></div>
@@ -156,7 +155,7 @@
             <div class="chart-period">April 2024</div>
           </div>
           <div class="chart-container">
-            <!-- Pie chart would be rendered here -->
+          
             <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(
               var(--primary-color) 0% 25%, 
               var(--success-color) 25% 45%, 
@@ -168,7 +167,6 @@
         </div>
       </div>
 
-      <!-- Detailed Transactions -->
       <div class="report-table-container">
         <div class="table-header">
           <div class="table-title">Detailed Transactions</div>
@@ -223,7 +221,7 @@
         </table>
       </div>
 
-      <!-- Quick Add Button -->
+    
       <div class="quick-add">
         <button class="add-btn">
           <i class="fas fa-plus"></i>
@@ -236,10 +234,10 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Reports page loaded');
       
-      // Example of how you might handle report card clicks
+  
       document.querySelectorAll('.report-card').forEach(card => {
         card.addEventListener('click', function() {
-          // This would load the specific report
+       
           console.log('Report card clicked:', this.querySelector('.report-title').textContent);
         });
       });

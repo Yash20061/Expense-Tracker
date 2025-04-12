@@ -4,8 +4,604 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ExpensePro | Dashboard</title>
-  <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --danger-color: #f72585;
+      --warning-color: #f8961e;
+      --success-color: #4cc9f0;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #adb5bd;
+      --sidebar-width: 250px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+    }
+
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: white;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      height: 100vh;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      margin-bottom: 5px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      color: var(--dark-color);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      background-color: #f0f2f5;
+      color: var(--primary-color);
+    }
+
+    .nav-link.active {
+      background-color: #e6f0ff;
+      color: var(--primary-color);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .nav-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      transition: all 0.3s;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+    }
+
+    .notification-btn {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--dark-color);
+      cursor: pointer;
+      margin-right: 20px;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: var(--danger-color);
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .card-actions button {
+      background: none;
+      border: none;
+      color: var(--gray-color);
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    /* Balance Summary */
+    .balance-summary {
+      grid-column: span 1;
+    }
+
+    .balance-amount {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+
+    .balance-change {
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .balance-change i {
+      margin-right: 5px;
+    }
+
+    .positive {
+      color: var(--success-color);
+    }
+
+    .negative {
+      color: var(--danger-color);
+    }
+
+    /* Budget Status */
+    .budget-status {
+      grid-column: span 1;
+    }
+
+    .budget-progress {
+      height: 8px;
+      background-color: #eee;
+      border-radius: 4px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .success {
+      background-color: var(--success-color);
+    }
+
+    .warning {
+      background-color: var(--warning-color);
+    }
+
+    .danger {
+      background-color: var(--danger-color);
+    }
+
+    .budget-details {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 0.9rem;
+      color: var(--gray-color);
+    }
+
+    /* Recent Expenses */
+    .recent-expenses {
+      grid-column: span 1;
+    }
+
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .expense-item:last-child {
+      border-bottom: none;
+    }
+
+    .expense-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .expense-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #f0f2f5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      color: var(--primary-color);
+    }
+
+    .expense-details h4 {
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+    }
+
+    .expense-details p {
+      font-size: 0.8rem;
+      color: var(--gray-color);
+    }
+
+    .expense-amount {
+      font-weight: 600;
+    }
+
+    /* Spending Overview */
+    .spending-overview {
+      grid-column: span 2;
+      min-height: 300px;
+    }
+
+    .chart-placeholder {
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-color);
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    /* Smart Reminders */
+    .smart-reminders {
+      grid-column: span 1;
+    }
+
+    .reminder-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .reminder-item:last-child {
+      border-bottom: none;
+    }
+
+    .reminder-message {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .reminder-meta {
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--gray-color);
+      margin-bottom: 10px;
+    }
+
+    .reminder-meta i {
+      margin-right: 5px;
+    }
+
+    .reminder-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .reminder-actions button {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .reminder-actions button:first-child {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .reminder-actions button:last-child {
+      background-color: #eee;
+      color: var(--dark-color);
+    }
+
+    /* Expense Memory */
+    .expense-memory {
+      grid-column: span 1;
+    }
+
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .memory-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .memory-date {
+      font-size: 0.9rem;
+      color: var(--gray-color);
+    }
+
+    .memory-card {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .memory-message {
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .memory-details {
+      font-size: 0.8rem;
+      color: var(--gray-color);
+    }
+
+    /* Quick Add Button */
+    .quick-add {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+    }
+
+    .add-btn {
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.1);
+      background-color: var(--secondary-color);
+    }
+
+    /* Empty State Styles */
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray-color);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+
+    .empty-message {
+      margin-bottom: 15px;
+    }
+
+    .empty-action {
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Form Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray-color);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #eee;
+      color: var(--dark-color);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      
+      .spending-overview {
+        grid-column: span 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .header {
+        padding: 15px;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-right: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-container">
@@ -23,49 +619,49 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="expense-tracker.html" class="nav-link">
+          <a href="#" class="nav-link" id="transactions-link">
             <i class="fas fa-exchange-alt"></i>
             <span>Transactions</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="saving.html" class="nav-link">
+          <a href="#" class="nav-link" id="budget-link">
             <i class="fas fa-chart-bar"></i>
             <span>Budget & Savings</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="income.html" class="nav-link">
+          <a href="#" class="nav-link" id="income-link">
             <i class="fas fa-piggy-bank"></i>
             <span>Income Management</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="reminder.html" class="nav-link">
+          <a href="#" class="nav-link" id="reminders-link">
             <i class="fas fa-bell"></i>
             <span>Reminders</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="reports.html" class="nav-link">
-            <i class="fas fa-chart-bar"></i>
+          <a href="#" class="nav-link" id="reports-link">
+            <i class="fas fa-chart-pie"></i>
             <span>Reports</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="Shared_Expance.html" class="nav-link">
+          <a href="#" class="nav-link" id="shared-link">
             <i class="fas fa-users"></i>
             <span>Shared</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="Chatbot.html" class="nav-link">
+          <a href="#" class="nav-link" id="assistant-link">
             <i class="fas fa-robot"></i>
             <span>AI Assistant</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="settings.html" class="nav-link">
+          <a href="#" class="nav-link" id="settings-link">
             <i class="fas fa-cog"></i>
             <span>Settings</span>
           </a>
@@ -80,7 +676,7 @@
         <div class="user-menu">
           <button class="notification-btn">
             <i class="fas fa-bell"></i>
-            <span class="notification-badge">3</span>
+            <span class="notification-badge">0</span>
           </button>
           <div class="user-avatar">JS</div>
         </div>
@@ -93,10 +689,10 @@
           <div class="card-header">
             <h2 class="card-title">Available Balance</h2>
           </div>
-          <div class="balance-amount">₹24,850</div>
-          <div class="balance-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>₹2,150 (12%) from last month</span>
+          <div class="balance-amount">₹0</div>
+          <div class="balance-change">
+            <i class="fas fa-equals"></i>
+            <span>No data available</span>
           </div>
         </div>
 
@@ -105,19 +701,15 @@
           <div class="card-header">
             <h2 class="card-title">Monthly Budget</h2>
             <div class="card-actions">
-              <button><i class="fas fa-ellipsis-h"></i></button>
+              <button id="set-budget-btn"><i class="fas fa-ellipsis-h"></i></button>
             </div>
           </div>
-          <div class="budget-progress">
-            <div class="progress-bar warning" style="width: 78%"></div>
-          </div>
-          <div class="budget-details">
-            <span>₹15,600 spent</span>
-            <span>₹20,000 limit</span>
-          </div>
-          <div class="budget-details">
-            <span>₹4,400 remaining</span>
-            <span>₹2,200/day suggested</span>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <p class="empty-message">No budget set for this month</p>
+            <button class="empty-action" id="setup-budget-btn">Set Up Budget</button>
           </div>
         </div>
 
@@ -126,44 +718,15 @@
           <div class="card-header">
             <h2 class="card-title">Recent Expenses</h2>
             <div class="card-actions">
-              <button><i class="fas fa-ellipsis-h"></i></button>
+              <button id="add-expense-btn"><i class="fas fa-ellipsis-h"></i></button>
             </div>
           </div>
-          <div class="expense-item">
-            <div class="expense-info">
-              <div class="expense-icon">
-                <i class="fas fa-utensils"></i>
-              </div>
-              <div class="expense-details">
-                <h4>Dinner at Domino's</h4>
-                <p>Yesterday • Food</p>
-              </div>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-receipt"></i>
             </div>
-            <div class="expense-amount">-₹350</div>
-          </div>
-          <div class="expense-item">
-            <div class="expense-info">
-              <div class="expense-icon">
-                <i class="fas fa-gas-pump"></i>
-              </div>
-              <div class="expense-details">
-                <h4>Petrol</h4>
-                <p>Apr 10 • Transport</p>
-              </div>
-            </div>
-            <div class="expense-amount">-₹500</div>
-          </div>
-          <div class="expense-item">
-            <div class="expense-info">
-              <div class="expense-icon">
-                <i class="fas fa-shopping-bag"></i>
-              </div>
-              <div class="expense-details">
-                <h4>Amazon Purchase</h4>
-                <p>Apr 9 • Shopping</p>
-              </div>
-            </div>
-            <div class="expense-amount">-₹1,250</div>
+            <p class="empty-message">No expenses recorded yet</p>
+            <button class="empty-action" id="add-first-expense-btn">Add Expense</button>
           </div>
         </div>
 
@@ -172,14 +735,13 @@
           <div class="card-header">
             <h2 class="card-title">Spending Overview</h2>
             <div class="card-actions">
-              <button>Week</button>
-              <button>Month</button>
-              <button>Year</button>
-              <button><i class="fas fa-ellipsis-h"></i></button>
+              <button class="timeframe-btn active" data-timeframe="week">Week</button>
+              <button class="timeframe-btn" data-timeframe="month">Month</button>
+              <button class="timeframe-btn" data-timeframe="year">Year</button>
             </div>
           </div>
-          <div class="chart-placeholder">
-            [Spending Chart Would Appear Here]
+          <div class="chart-container">
+            <canvas id="spendingChart"></canvas>
           </div>
         </div>
 
@@ -188,41 +750,15 @@
           <div class="card-header">
             <h2 class="card-title">Smart Reminders</h2>
             <div class="card-actions">
-              <button><i class="fas fa-ellipsis-h"></i></button>
+              <button id="add-reminder-btn"><i class="fas fa-ellipsis-h"></i></button>
             </div>
           </div>
-          <div class="reminder-item">
-            <p class="reminder-message">You usually spend ₹200 on Sundays. Today is Sunday.</p>
-            <div class="reminder-meta">
-              <i class="fas fa-clock"></i>
-              <span>Today • Habit</span>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-bell-slash"></i>
             </div>
-            <div class="reminder-actions">
-              <button>Set Budget Limit</button>
-              <button>Dismiss</button>
-            </div>
-          </div>
-          <div class="reminder-item">
-            <p class="reminder-message">Internet bill payment due in 2 days (₹800)</p>
-            <div class="reminder-meta">
-              <i class="fas fa-calendar-alt"></i>
-              <span>Apr 15 • Bill</span>
-            </div>
-            <div class="reminder-actions">
-              <button>Pay Now</button>
-              <button>Remind Later</button>
-            </div>
-          </div>
-          <div class="reminder-item">
-            <p class="reminder-message">You've spent ₹700 on food this week (usual: ₹500)</p>
-            <div class="reminder-meta">
-              <i class="fas fa-chart-line"></i>
-              <span>Weekly Summary</span>
-            </div>
-            <div class="reminder-actions">
-              <button>View Details</button>
-              <button>Dismiss</button>
-            </div>
+            <p class="empty-message">No reminders set up</p>
+            <button class="empty-action" id="add-first-reminder-btn">Add Reminder</button>
           </div>
         </div>
 
@@ -230,39 +766,626 @@
         <div class="card expense-memory">
           <div class="memory-header">
             <h2 class="memory-title">Expense Memory</h2>
-            <div class="memory-date">April 2024</div>
+            <div class="memory-date">No data</div>
           </div>
-          <div class="memory-card">
-            <p class="memory-message">Last Friday at 8PM, you spent ₹350 on dinner at Domino's, Nadiad.</p>
-            <p class="memory-details">April 5 • Food • #friends</p>
-          </div>
-          <div class="memory-card">
-            <p class="memory-message">On this day last month, you spent ₹1,200 at Amazon for electronics.</p>
-            <p class="memory-details">March 11 • Shopping • #gadgets</p>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-memory"></i>
+            </div>
+            <p class="empty-message">Your expense patterns will appear here</p>
           </div>
         </div>
       </div>
 
       <!-- Quick Add Button -->
       <div class="quick-add">
-        <button class="add-btn">
+        <button class="add-btn" id="quick-add-btn">
           <i class="fas fa-plus"></i>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Add Expense Modal -->
+  <div class="modal" id="expense-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Expense</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="expense-form">
+        <div class="form-group">
+          <label for="expense-amount" class="form-label">Amount</label>
+          <input type="number" id="expense-amount" class="form-control" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+          <label for="expense-category" class="form-label">Category</label>
+          <select id="expense-category" class="form-control" required>
+            <option value="">Select a category</option>
+            <option value="food">Food</option>
+            <option value="transport">Transport</option>
+            <option value="shopping">Shopping</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="bills">Bills</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expense-description" class="form-label">Description</label>
+          <input type="text" id="expense-description" class="form-control" placeholder="What was this expense for?">
+        </div>
+        <div class="form-group">
+          <label for="expense-date" class="form-label">Date</label>
+          <input type="date" id="expense-date" class="form-control" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-expense">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Set Budget Modal -->
+  <div class="modal" id="budget-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Set Monthly Budget</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="budget-form">
+        <div class="form-group">
+          <label for="budget-amount" class="form-label">Budget Amount</label>
+          <input type="number" id="budget-amount" class="form-control" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+          <label for="budget-categories" class="form-label">Categories (optional)</label>
+          <div id="budget-categories">
+            <div class="category-input">
+              <input type="text" placeholder="Category name" class="form-control category-name">
+              <input type="number" placeholder="Amount" class="form-control category-amount">
+              <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" id="add-category-btn">Add Category</button>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-budget">Cancel</button>
+          <button type="submit" class="btn btn-primary">Set Budget</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Reminder Modal -->
+  <div class="modal" id="reminder-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Reminder</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="reminder-form">
+        <div class="form-group">
+          <label for="reminder-type" class="form-label">Reminder Type</label>
+          <select id="reminder-type" class="form-control" required>
+            <option value="">Select type</option>
+            <option value="bill">Bill Payment</option>
+            <option value="budget">Budget Limit</option>
+            <option value="habit">Spending Habit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reminder-message" class="form-label">Message</label>
+          <input type="text" id="reminder-message" class="form-control" placeholder="Enter reminder message" required>
+        </div>
+        <div class="form-group">
+          <label for="reminder-date" class="form-label">Date</label>
+          <input type="date" id="reminder-date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="reminder-amount" class="form-label">Amount (optional)</label>
+          <input type="number" id="reminder-amount" class="form-control" placeholder="0.00">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-reminder">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Reminder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // In a real app, this would fetch data from your backend API
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Dashboard loaded');
-      
-      // Example of dynamic content loading
-      // fetch('/api/dashboard-data')
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     // Update the UI with real data
-      //   });
+      // Initialize empty data state
+      const appData = {
+        balance: 0,
+        budget: null,
+        expenses: [],
+        reminders: [],
+        income: [],
+        categories: ['Food', 'Transport', 'Shopping', 'Entertainment', 'Bills', 'Other']
+      };
+
+      // DOM Elements
+      const elements = {
+        balanceAmount: document.querySelector('.balance-amount'),
+        balanceChange: document.querySelector('.balance-change'),
+        budgetCard: document.querySelector('.budget-status'),
+        recentExpensesCard: document.querySelector('.recent-expenses'),
+        smartRemindersCard: document.querySelector('.smart-reminders'),
+        expenseMemoryCard: document.querySelector('.expense-memory'),
+        spendingChart: document.getElementById('spendingChart'),
+        quickAddBtn: document.getElementById('quick-add-btn'),
+        setupBudgetBtn: document.getElementById('setup-budget-btn'),
+        addFirstExpenseBtn: document.getElementById('add-first-expense-btn'),
+        addFirstReminderBtn: document.getElementById('add-first-reminder-btn'),
+        addExpenseBtn: document.getElementById('add-expense-btn'),
+        addReminderBtn: document.getElementById('add-reminder-btn'),
+        setBudgetBtn: document.getElementById('set-budget-btn'),
+        expenseModal: document.getElementById('expense-modal'),
+        budgetModal: document.getElementById('budget-modal'),
+        reminderModal: document.getElementById('reminder-modal'),
+        expenseForm: document.getElementById('expense-form'),
+        budgetForm: document.getElementById('budget-form'),
+        reminderForm: document.getElementById('reminder-form'),
+        cancelExpense: document.getElementById('cancel-expense'),
+        cancelBudget: document.getElementById('cancel-budget'),
+        cancelReminder: document.getElementById('cancel-reminder'),
+        addCategoryBtn: document.getElementById('add-category-btn'),
+        budgetCategories: document.getElementById('budget-categories'),
+        mobileMenuBtn: document.querySelector('.mobile-menu-btn'),
+        sidebar: document.querySelector('.sidebar')
+      };
+
+      // Chart initialization
+      let spendingChart = new Chart(elements.spendingChart, {
+        type: 'bar',
+        data: {
+          labels: ['No data'],
+          datasets: [{
+            label: 'Spending',
+            data: [0],
+            backgroundColor: '#4361ee'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Event Listeners
+      elements.quickAddBtn.addEventListener('click', () => {
+        // Default to expense modal for quick add
+        openModal(elements.expenseModal);
+      });
+
+      elements.setupBudgetBtn.addEventListener('click', () => {
+        openModal(elements.budgetModal);
+      });
+
+      elements.addFirstExpenseBtn.addEventListener('click', () => {
+        openModal(elements.expenseModal);
+      });
+
+      elements.addFirstReminderBtn.addEventListener('click', () => {
+        openModal(elements.reminderModal);
+      });
+
+      elements.addExpenseBtn.addEventListener('click', () => {
+        openModal(elements.expenseModal);
+      });
+
+      elements.addReminderBtn.addEventListener('click', () => {
+        openModal(elements.reminderModal);
+      });
+
+      elements.setBudgetBtn.addEventListener('click', () => {
+        openModal(elements.budgetModal);
+      });
+
+      elements.cancelExpense.addEventListener('click', () => {
+        closeModal(elements.expenseModal);
+      });
+
+      elements.cancelBudget.addEventListener('click', () => {
+        closeModal(elements.budgetModal);
+      });
+
+      elements.cancelReminder.addEventListener('click', () => {
+        closeModal(elements.reminderModal);
+      });
+
+      elements.addCategoryBtn.addEventListener('click', addCategoryInput);
+
+      elements.expenseForm.addEventListener('submit', handleAddExpense);
+      elements.budgetForm.addEventListener('submit', handleSetBudget);
+      elements.reminderForm.addEventListener('submit', handleAddReminder);
+
+      elements.mobileMenuBtn.addEventListener('click', toggleSidebar);
+
+      // Timeframe buttons for spending chart
+      document.querySelectorAll('.timeframe-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          updateChart(this.dataset.timeframe);
+        });
+      });
+
+      // Modal functions
+      function openModal(modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal(modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+
+      // Close modals when clicking outside
+      window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+          closeModal(e.target);
+        }
+      });
+
+      // Add category input
+      function addCategoryInput() {
+        const div = document.createElement('div');
+        div.className = 'category-input';
+        div.innerHTML = `
+          <input type="text" placeholder="Category name" class="form-control category-name">
+          <input type="number" placeholder="Amount" class="form-control category-amount">
+          <button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button>
+        `;
+        elements.budgetCategories.appendChild(div);
+        
+        // Add event listener to the new remove button
+        div.querySelector('.remove-category-btn').addEventListener('click', function() {
+          div.remove();
+        });
+      }
+
+      // Form handlers
+      function handleAddExpense(e) {
+        e.preventDefault();
+        
+        const amount = parseFloat(document.getElementById('expense-amount').value);
+        const category = document.getElementById('expense-category').value;
+        const description = document.getElementById('expense-description').value;
+        const date = document.getElementById('expense-date').value || new Date().toISOString().split('T')[0];
+        
+        const expense = {
+          id: Date.now(),
+          amount,
+          category,
+          description,
+          date
+        };
+        
+        appData.expenses.push(expense);
+        updateUI();
+        closeModal(elements.expenseModal);
+        elements.expenseForm.reset();
+        
+        // Show success message
+        alert('Expense added successfully!');
+      }
+
+      function handleSetBudget(e) {
+        e.preventDefault();
+        
+        const amount = parseFloat(document.getElementById('budget-amount').value);
+        const categories = [];
+        
+        // Get category breakdown if any
+        document.querySelectorAll('.category-input').forEach(input => {
+          const name = input.querySelector('.category-name').value;
+          const amount = parseFloat(input.querySelector('.category-amount').value);
+          
+          if (name && amount) {
+            categories.push({ name, amount });
+          }
+        });
+        
+        appData.budget = {
+          amount,
+          categories: categories.length > 0 ? categories : null
+        };
+        
+        updateUI();
+        closeModal(elements.budgetModal);
+        elements.budgetForm.reset();
+        
+        // Clear category inputs
+        elements.budgetCategories.innerHTML = '<div class="category-input"><input type="text" placeholder="Category name" class="form-control category-name"><input type="number" placeholder="Amount" class="form-control category-amount"><button type="button" class="remove-category-btn"><i class="fas fa-times"></i></button></div>';
+        
+        // Show success message
+        alert('Budget set successfully!');
+      }
+
+      function handleAddReminder(e) {
+        e.preventDefault();
+        
+        const type = document.getElementById('reminder-type').value;
+        const message = document.getElementById('reminder-message').value;
+        const date = document.getElementById('reminder-date').value;
+        const amount = document.getElementById('reminder-amount').value;
+        
+        const reminder = {
+          id: Date.now(),
+          type,
+          message,
+          date,
+          amount: amount ? parseFloat(amount) : null
+        };
+        
+        appData.reminders.push(reminder);
+        updateUI();
+        closeModal(elements.reminderModal);
+        elements.reminderForm.reset();
+        
+        // Show success message
+        alert('Reminder added successfully!');
+      }
+
+      // Update UI based on data
+      function updateUI() {
+        // Update balance
+        const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+        const totalIncome = appData.income.reduce((sum, inc) => sum + inc.amount, 0);
+        const balance = totalIncome - totalExpenses;
+        
+        elements.balanceAmount.textContent = `₹${balance.toFixed(2)}`;
+        
+        // Update budget card if set
+        if (appData.budget) {
+          const spentPercentage = (totalExpenses / appData.budget.amount) * 100;
+          const remaining = appData.budget.amount - totalExpenses;
+          const suggestedDaily = remaining / daysLeftInMonth();
+          
+          elements.budgetCard.innerHTML = `
+            <div class="card-header">
+              <h2 class="card-title">Monthly Budget</h2>
+              <div class="card-actions">
+                <button id="set-budget-btn"><i class="fas fa-ellipsis-h"></i></button>
+              </div>
+            </div>
+            <div class="budget-progress">
+              <div class="progress-bar ${spentPercentage > 90 ? 'danger' : spentPercentage > 70 ? 'warning' : 'success'}" 
+                   style="width: ${Math.min(spentPercentage, 100)}%"></div>
+            </div>
+            <div class="budget-details">
+              <span>₹${totalExpenses.toFixed(2)} spent</span>
+              <span>₹${appData.budget.amount.toFixed(2)} limit</span>
+            </div>
+            <div class="budget-details">
+              <span>₹${remaining.toFixed(2)} remaining</span>
+              <span>₹${suggestedDaily.toFixed(2)}/day suggested</span>
+            </div>
+          `;
+          
+          // Reattach event listener
+          document.getElementById('set-budget-btn').addEventListener('click', () => {
+            openModal(elements.budgetModal);
+          });
+        }
+        
+        // Update recent expenses
+        if (appData.expenses.length > 0) {
+          const recentExpenses = [...appData.expenses]
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 3);
+          
+          let expensesHTML = `
+            <div class="card-header">
+              <h2 class="card-title">Recent Expenses</h2>
+              <div class="card-actions">
+                <button id="add-expense-btn"><i class="fas fa-ellipsis-h"></i></button>
+              </div>
+            </div>
+          `;
+          
+          recentExpenses.forEach(exp => {
+            const icon = getCategoryIcon(exp.category);
+            const date = formatDate(exp.date);
+            
+            expensesHTML += `
+              <div class="expense-item">
+                <div class="expense-info">
+                  <div class="expense-icon">
+                    <i class="fas fa-${icon}"></i>
+                  </div>
+                  <div class="expense-details">
+                    <h4>${exp.description || 'Expense'}</h4>
+                    <p>${date} • ${exp.category.charAt(0).toUpperCase() + exp.category.slice(1)}</p>
+                  </div>
+                </div>
+                <div class="expense-amount">-₹${exp.amount.toFixed(2)}</div>
+              </div>
+            `;
+          });
+          
+          elements.recentExpensesCard.innerHTML = expensesHTML;
+          
+          // Reattach event listener
+          document.getElementById('add-expense-btn').addEventListener('click', () => {
+            openModal(elements.expenseModal);
+          });
+        }
+        
+        // Update reminders
+        if (appData.reminders.length > 0) {
+          let remindersHTML = `
+            <div class="card-header">
+              <h2 class="card-title">Smart Reminders</h2>
+              <div class="card-actions">
+                <button id="add-reminder-btn"><i class="fas fa-ellipsis-h"></i></button>
+              </div>
+            </div>
+          `;
+          
+          appData.reminders.slice(0, 3).forEach(rem => {
+            const icon = getReminderIcon(rem.type);
+            const dateInfo = rem.date ? formatDate(rem.date) : 'Ongoing';
+            
+            remindersHTML += `
+              <div class="reminder-item">
+                <p class="reminder-message">${rem.message}</p>
+                <div class="reminder-meta">
+                  <i class="fas fa-${icon}"></i>
+                  <span>${dateInfo} • ${rem.type.charAt(0).toUpperCase() + rem.type.slice(1)}</span>
+                </div>
+                <div class="reminder-actions">
+                  <button>View</button>
+                  <button>Dismiss</button>
+                </div>
+              </div>
+            `;
+          });
+          
+          elements.smartRemindersCard.innerHTML = remindersHTML;
+          
+          // Reattach event listener
+          document.getElementById('add-reminder-btn').addEventListener('click', () => {
+            openModal(elements.reminderModal);
+          });
+        }
+        
+        // Update expense memory
+        if (appData.expenses.length > 0) {
+          const today = new Date();
+          const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+          
+          elements.expenseMemoryCard.innerHTML = `
+            <div class="memory-header">
+              <h2 class="memory-title">Expense Memory</h2>
+              <div class="memory-date">${monthNames[today.getMonth()]} ${today.getFullYear()}</div>
+            </div>
+            <div class="memory-card">
+              <p class="memory-message">You've spent ₹${totalExpenses.toFixed(2)} this month across ${appData.expenses.length} transactions.</p>
+              <p class="memory-details">Monthly Summary • ${appData.categories.length} Categories</p>
+            </div>
+          `;
+        }
+        
+        // Update chart
+        updateChart('month');
+      }
+
+      // Helper functions
+      function getCategoryIcon(category) {
+        const icons = {
+          food: 'utensils',
+          transport: 'car',
+          shopping: 'shopping-bag',
+          entertainment: 'film',
+          bills: 'file-invoice-dollar',
+          other: 'shapes'
+        };
+        return icons[category] || 'shapes';
+      }
+
+      function getReminderIcon(type) {
+        const icons = {
+          bill: 'file-invoice-dollar',
+          budget: 'chart-pie',
+          habit: 'redo'
+        };
+        return icons[type] || 'bell';
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (date.toDateString() === today.toDateString()) {
+          return 'Today';
+        } else if (date.toDateString() === yesterday.toDateString()) {
+          return 'Yesterday';
+        } else {
+          const options = { month: 'short', day: 'numeric' };
+          return date.toLocaleDateString('en-US', options);
+        }
+      }
+
+      function daysLeftInMonth() {
+        const today = new Date();
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        return lastDay.getDate() - today.getDate();
+      }
+
+      function updateChart(timeframe) {
+        let labels, data;
+        
+        if (appData.expenses.length === 0) {
+          labels = ['No data'];
+          data = [0];
+        } else {
+          // Simplified chart data - in a real app, you'd group expenses by timeframe
+          const last7Days = appData.expenses
+            .filter(exp => {
+              const expDate = new Date(exp.date);
+              const today = new Date();
+              const sevenDaysAgo = new Date(today);
+              sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+              return expDate >= sevenDaysAgo;
+            })
+            .reduce((sum, exp) => sum + exp.amount, 0);
+          
+          const last30Days = appData.expenses
+            .filter(exp => {
+              const expDate = new Date(exp.date);
+              const today = new Date();
+              const thirtyDaysAgo = new Date(today);
+              thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+              return expDate >= thirtyDaysAgo;
+            })
+            .reduce((sum, exp) => sum + exp.amount, 0);
+          
+          const lastYear = appData.expenses
+            .filter(exp => {
+              const expDate = new Date(exp.date);
+              const today = new Date();
+              const oneYearAgo = new Date(today);
+              oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+              return expDate >= oneYearAgo;
+            })
+            .reduce((sum, exp) => sum + exp.amount, 0);
+          
+          if (timeframe === 'week') {
+            labels = ['Last 7 Days'];
+            data = [last7Days];
+          } else if (timeframe === 'month') {
+            labels = ['Last 30 Days'];
+            data = [last30Days];
+          } else {
+            labels = ['Last Year'];
+            data = [lastYear];
+          }
+        }
+        
+        spendingChart.data.labels = labels;
+        spendingChart.data.datasets[0].data = data;
+        spendingChart.update();
+      }
+
+      function toggleSidebar() {
+        elements.sidebar.classList.toggle('active');
+      }
+
+      // Set today's date as default in date inputs
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('expense-date').value = today;
+      document.getElementById('reminder-date').value = today;
     });
   </script>
 </body>
