@@ -24,14 +24,14 @@ body {
   line-height: 1.4;
 }
 
-/* Layout */
+
 .dashboard-container {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 100vh;
 }
 
-/* Sidebar */
+
 .sidebar {
   background: white;
   border-right: 1px solid var(--medium-gray);
@@ -86,7 +86,7 @@ body {
   color: var(--primary-color);
 }
 
-/* Main Content */
+
 .main-content {
   padding: 1.5rem;
 }
@@ -144,7 +144,6 @@ body {
   cursor: pointer;
 }
 
-/* Dashboard Widgets */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -186,7 +185,7 @@ body {
   margin-left: 0.5rem;
 }
 
-/* Balance Summary */
+
 .balance-summary {
   grid-column: span 4;
 }
@@ -212,7 +211,7 @@ body {
   margin-right: 0.3rem;
 }
 
-/* Budget Status */
+
 .budget-status {
   grid-column: span 4;
 }
@@ -246,7 +245,6 @@ body {
   font-size: 0.85rem;
 }
 
-/* Recent Expenses */
 .recent-expenses {
   grid-column: span 4;
 }
@@ -294,7 +292,7 @@ body {
   font-weight: 600;
 }
 
-/* Spending Overview */
+
 .spending-overview {
   grid-column: span 8;
   min-height: 300px;
@@ -310,7 +308,7 @@ body {
   color: var(--dark-gray);
 }
 
-/* Smart Reminders */
+
 .smart-reminders {
   grid-column: span 4;
 }
@@ -354,7 +352,7 @@ body {
   cursor: pointer;
 }
 
-/* Expense Memory */
+
 .expense-memory {
   grid-column: span 12;
 }
@@ -392,7 +390,7 @@ body {
   margin-top: 0.3rem;
 }
 
-/* Quick Add */
+
 .quick-add {
   position: fixed;
   bottom: 2rem;

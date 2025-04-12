@@ -1,18 +1,15 @@
     const API_KEY = "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";
     const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-    // DOM elements
     const chatbotMessages = document.getElementById('chatbotMessages');
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotSend = document.getElementById('chatbotSend');
 
-    // Insert example question into input
     function insertExample(question) {
       chatbotInput.value = question;
       chatbotInput.focus();
     }
 
-    // Add message to chat with basic formatting
     function addMessage(text, sender) {
       const messageElement = document.createElement('div');
       messageElement.classList.add('message', `${sender}-message`);
@@ -29,7 +26,6 @@
       chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
     }
 
-    // Show typing indicator
     function showTypingIndicator() {
       const typingElement = document.createElement('div');
       typingElement.classList.add('typing-indicator');
@@ -43,7 +39,6 @@
       return typingElement;
     }
 
-    // Remove typing indicator
     function removeTypingIndicator(typingElement) {
       if (typingElement && typingElement.parentNode) {
         typingElement.parentNode.removeChild(typingElement);
@@ -105,7 +100,7 @@
       }
     }
 
-    // Event listeners
+
     chatbotSend.addEventListener('click', sendMessage);
     chatbotInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -113,10 +108,8 @@
       }
     });
 
-    // Focus input on page load
     chatbotInput.focus();
 
-    // Enable/disable send button based on input
     chatbotInput.addEventListener('input', () => {
       chatbotSend.disabled = !chatbotInput.value.trim();
     });
