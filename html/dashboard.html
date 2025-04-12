@@ -6,6 +6,7 @@
   <title>ExpensePro | Dashboard</title>
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="dashboard-container">
@@ -226,7 +227,7 @@
           </div>
         </div>
 
-        <!-- Expense Memory -->
+ 
         <div class="card expense-memory">
           <div class="memory-header">
             <h2 class="memory-title">Expense Memory</h2>
@@ -243,7 +244,7 @@
         </div>
       </div>
 
-      <!-- Quick Add Button -->
+      
       <div class="quick-add">
         <button class="add-btn">
           <i class="fas fa-plus"></i>
@@ -253,17 +254,775 @@
   </div>
 
   <script>
-    // In a real app, this would fetch data from your backend API
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Dashboard loaded');
-      
-      // Example of dynamic content loading
-      // fetch('/api/dashboard-data')
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     // Update the UI with real data
-      //   });
+   document.addEventListener('DOMContentLoaded', function() {
+
+  const appData = {
+    balance: 0,
+    monthlyBudget: 0,
+    expenses: [],
+    income: [],
+    reminders: [],
+    categories: [
+      { id: 'food', name: 'Food', icon: 'fa-utensils', color: '#F59E0B' },
+      { id: 'transport', name: 'Transport', icon: 'fa-gas-pump', color: '#3B82F6' },
+      { id: 'shopping', name: 'Shopping', icon: 'fa-shopping-bag', color: '#8B5CF6' },
+      { id: 'bills', name: 'Bills', icon: 'fa-file-invoice', color: '#10B981' },
+      { id: 'entertainment', name: 'Entertainment', icon: 'fa-film', color: '#EC4899' },
+      { id: 'health', name: 'Health', icon: 'fa-heartbeat', color: '#EF4444' }
+    ],
+    spendingPeriod: 'month', // week, month, year
+    notifications: []
+  };
+
+
+  const elements = {
+    balanceAmount: document.querySelector('.balance-amount'),
+    balanceChange: document.querySelector('.balance-change'),
+    budgetSpent: document.querySelector('.budget-details span:first-child'),
+    budgetLimit: document.querySelector('.budget-details span:nth-child(2)'),
+    budgetRemaining: document.querySelector('.budget-details:nth-of-type(2) span:first-child'),
+    budgetSuggested: document.querySelector('.budget-details:nth-of-type(2) span:nth-child(2)'),
+    progressBar: document.querySelector('.progress-bar'),
+    recentExpensesList: document.querySelector('.recent-expenses'),
+    spendingOverviewButtons: document.querySelectorAll('.spending-overview .card-actions button'),
+    chartPlaceholder: document.querySelector('.chart-placeholder'),
+    remindersList: document.querySelector('.smart-reminders'),
+    expenseMemoryList: document.querySelector('.expense-memory'),
+    notificationBadge: document.querySelector('.notification-badge'),
+    addButton: document.querySelector('.add-btn')
+  };
+
+
+  initApp();
+
+
+  function initApp() {
+
+    loadData();
+    
+  
+    setupEventListeners();
+    
+  
+    renderAll();
+  }
+
+  function loadData() {
+    const savedData = localStorage.getItem('expenseProData');
+    if (savedData) {
+      Object.assign(appData, JSON.parse(savedData));
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem('expenseProData', JSON.stringify(appData));
+  }
+
+  function setupEventListeners() {
+
+    elements.spendingOverviewButtons.forEach(button => {
+      if (!button.querySelector('i')) { // Skip the ellipsis button
+        button.addEventListener('click', function() {
+          appData.spendingPeriod = this.textContent.toLowerCase();
+          renderSpendingOverview();
+          highlightActivePeriodButton();
+        });
+      }
     });
+
+
+    document.querySelector('.notification-btn').addEventListener('click', showNotifications);
+
+    elements.addButton.addEventListener('click', showAddTransactionModal);
+  }
+
+  function renderAll() {
+    renderBalanceSummary();
+    renderBudgetStatus();
+    renderRecentExpenses();
+    renderSpendingOverview();
+    renderSmartReminders();
+    renderExpenseMemory();
+    updateNotificationBadge();
+    highlightActivePeriodButton();
+  }
+
+  function renderBalanceSummary() {
+    elements.balanceAmount.textContent = `₹${appData.balance.toLocaleString()}`;
+    
+   
+    const lastMonthBalance = appData.balance * 0.9; 
+    const changeAmount = appData.balance - lastMonthBalance;
+    const changePercent = Math.round((changeAmount / lastMonthBalance) * 100);
+    
+    elements.balanceChange.innerHTML = `
+      <i class="fas fa-arrow-${changeAmount >= 0 ? 'up' : 'down'}"></i>
+      <span>₹${Math.abs(changeAmount).toLocaleString()} (${Math.abs(changePercent)}%) from last month</span>
+    `;
+    
+    elements.balanceChange.className = changeAmount >= 0 ? 
+      'balance-change positive' : 'balance-change negative';
+  }
+
+  function renderBudgetStatus() {
+    if (appData.monthlyBudget > 0) {
+      const totalExpenses = appData.expenses
+        .filter(e => new Date(e.date).getMonth() === new Date().getMonth())
+        .reduce((sum, e) => sum + e.amount, 0);
+      
+      const remaining = appData.monthlyBudget - totalExpenses;
+      const daysLeft = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - new Date().getDate();
+      const suggestedDaily = daysLeft > 0 ? Math.round(remaining / daysLeft) : 0;
+      
+      const percentage = Math.min(100, Math.round((totalExpenses / appData.monthlyBudget) * 100));
+      
+     
+      elements.budgetSpent.textContent = `₹${totalExpenses.toLocaleString()} spent`;
+      elements.budgetLimit.textContent = `₹${appData.monthlyBudget.toLocaleString()} limit`;
+      elements.budgetRemaining.textContent = `₹${remaining.toLocaleString()} remaining`;
+      elements.budgetSuggested.textContent = `₹${suggestedDaily.toLocaleString()}/day suggested`;
+      
+     
+      elements.progressBar.style.width = `${percentage}%`;
+      elements.progressBar.className = 'progress-bar ' + 
+        (percentage < 70 ? 'success' : percentage < 90 ? 'warning' : 'danger');
+    } else {
+      elements.budgetSpent.textContent = '₹0 spent';
+      elements.budgetLimit.textContent = 'Set budget limit';
+      elements.budgetRemaining.textContent = 'No budget set';
+      elements.budgetSuggested.textContent = '';
+      elements.progressBar.style.width = '0%';
+    }
+  }
+
+  function renderRecentExpenses() {
+    elements.recentExpensesList.innerHTML = '';
+    
+    
+    const recentExpenses = [...appData.expenses]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 3);
+    
+    if (recentExpenses.length === 0) {
+      elements.recentExpensesList.innerHTML = '<p class="no-expenses">No recent expenses</p>';
+      return;
+    }
+    
+    recentExpenses.forEach(expense => {
+      const category = appData.categories.find(c => c.id === expense.category);
+      const date = new Date(expense.date);
+      const formattedDate = formatDate(date);
+      
+      const expenseEl = document.createElement('div');
+      expenseEl.className = 'expense-item';
+      expenseEl.innerHTML = `
+        <div class="expense-info">
+          <div class="expense-icon" style="background-color: ${category.color}20; color: ${category.color}">
+            <i class="fas ${category.icon}"></i>
+          </div>
+          <div class="expense-details">
+            <h4>${expense.description}</h4>
+            <p>${formattedDate} • ${category.name}</p>
+          </div>
+        </div>
+        <div class="expense-amount">-₹${expense.amount.toLocaleString()}</div>
+      `;
+      
+      elements.recentExpensesList.appendChild(expenseEl);
+    });
+  }
+
+
+function renderSpendingOverview() {
+
+  const existingCanvas = elements.chartPlaceholder.querySelector('canvas');
+  if (existingCanvas) {
+    existingCanvas.remove();
+  }
+  
+
+  const canvas = document.createElement('canvas');
+  canvas.height = 250;
+  elements.chartPlaceholder.innerHTML = '';
+  elements.chartPlaceholder.appendChild(canvas);
+
+  const data = getChartData();
+  
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Spending',
+        data: data.values,
+        backgroundColor: '#3B82F6',
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return '₹' + context.raw.toLocaleString();
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return '₹' + value.toLocaleString();
+            }
+          },
+          grid: {
+            color: '#E5E7EB'
+          }
+        }
+      }
+    }
+  });
+}
+
+function getChartData() {
+  const now = new Date();
+  let labels = [];
+  let values = [];
+  
+  switch(appData.spendingPeriod) {
+    case 'week':
+      // Last 7 days
+      labels = [];
+      values = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        labels.push(date.toLocaleDateString('en-IN', { weekday: 'short' }));
+        
+        const dayExpenses = appData.expenses
+          .filter(e => {
+            const eDate = new Date(e.date);
+            return eDate.getDate() === date.getDate() && 
+                   eDate.getMonth() === date.getMonth() && 
+                   eDate.getFullYear() === date.getFullYear();
+          })
+          .reduce((sum, e) => sum + e.amount, 0);
+          
+        values.push(dayExpenses);
+      }
+      break;
+      
+    case 'month':
+      
+      const weeksInMonth = Math.ceil((now.getDate() + new Date(now.getFullYear(), now.getMonth(), 1).getDay()) / 7);
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      if (weeksInMonth > 4) labels.push('Week 5');
+      
+      values = Array(labels.length).fill(0);
+      
+      appData.expenses.forEach(e => {
+        const eDate = new Date(e.date);
+        if (eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear()) {
+          const week = Math.floor((eDate.getDate() + new Date(eDate.getFullYear(), eDate.getMonth(), 1).getDay()) / 7);
+          values[week] += e.amount;
+        }
+      });
+      break;
+      
+    case 'year':
+     
+      labels = [];
+      values = [];
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date(now);
+        date.setMonth(date.getMonth() - i);
+        labels.push(date.toLocaleDateString('en-IN', { month: 'short' }));
+        
+        const monthExpenses = appData.expenses
+          .filter(e => {
+            const eDate = new Date(e.date);
+            return eDate.getMonth() === date.getMonth() && 
+                   eDate.getFullYear() === date.getFullYear();
+          })
+          .reduce((sum, e) => sum + e.amount, 0);
+          
+        values.push(monthExpenses);
+      }
+      break;
+  }
+  
+  return { labels, values };
+}
+
+
+  function renderSmartReminders() {
+    elements.remindersList.innerHTML = '';
+    
+  
+    const today = new Date();
+    const reminders = [];
+    
+
+    if (appData.expenses.length > 0) {
+      const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][today.getDay()];
+      const dayExpenses = appData.expenses
+        .filter(e => new Date(e.date).getDay() === today.getDay())
+        .map(e => e.amount);
+      
+      if (dayExpenses.length > 3) {
+        const avgSpending = dayExpenses.reduce((a, b) => a + b, 0) / dayExpenses.length;
+        reminders.push({
+          type: 'habit',
+          message: `You usually spend ₹${Math.round(avgSpending)} on ${dayOfWeek}s. Today is ${dayOfWeek}.`,
+          date: 'Today',
+          actions: ['Set Budget Limit', 'Dismiss']
+        });
+      }
+    }
+    
+    reminders.push({
+      type: 'bill',
+      message: 'Internet bill payment due in 2 days (₹800)',
+      date: `${today.getDate() + 2} ${today.toLocaleString('default', { month: 'short' })} • Bill`,
+      actions: ['Pay Now', 'Remind Later']
+    });
+    
+
+    if (appData.expenses.length > 0) {
+      const weekExpenses = appData.expenses
+        .filter(e => {
+          const expenseDate = new Date(e.date);
+          const oneWeekAgo = new Date(today);
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          return expenseDate >= oneWeekAgo;
+        })
+        .filter(e => e.category === 'food')
+        .map(e => e.amount);
+      
+      if (weekExpenses.length > 0) {
+        const total = weekExpenses.reduce((a, b) => a + b, 0);
+        reminders.push({
+          type: 'summary',
+          message: `You've spent ₹${total} on food this week ${weekExpenses.length > 3 ? '(usual: ₹500)' : ''}`,
+          date: 'Weekly Summary',
+          actions: ['View Details', 'Dismiss']
+        });
+      }
+    }
+    
+  
+    reminders.forEach(reminder => {
+      const reminderEl = document.createElement('div');
+      reminderEl.className = 'reminder-item';
+      
+      const icon = {
+        habit: 'fa-clock',
+        bill: 'fa-calendar-alt',
+        summary: 'fa-chart-line'
+      }[reminder.type];
+      
+      reminderEl.innerHTML = `
+        <p class="reminder-message">${reminder.message}</p>
+        <div class="reminder-meta">
+          <i class="fas ${icon}"></i>
+          <span>${reminder.date} • ${reminder.type === 'habit' ? 'Habit' : reminder.type === 'bill' ? 'Bill' : 'Summary'}</span>
+        </div>
+        <div class="reminder-actions">
+          ${reminder.actions.map(action => `<button>${action}</button>`).join('')}
+        </div>
+      `;
+      
+      elements.remindersList.appendChild(reminderEl);
+    });
+    
+ 
+    document.querySelectorAll('.reminder-actions button').forEach(button => {
+      button.addEventListener('click', function() {
+        
+        console.log(`Clicked: ${this.textContent}`);
+      });
+    });
+  }
+
+  function renderExpenseMemory() {
+    elements.expenseMemoryList.innerHTML = '';
+    
+  
+    const monthName = new Date().toLocaleString('default', { month: 'long' });
+    document.querySelector('.memory-date').textContent = `${monthName} ${new Date().getFullYear()}`;
+    
+
+    const memories = [];
+    
+
+    const lastFridayExpense = [...appData.expenses]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .find(e => new Date(e.date).getDay() === 5); // Friday
+    
+    if (lastFridayExpense) {
+      const category = appData.categories.find(c => c.id === lastFridayExpense.category);
+      const date = new Date(lastFridayExpense.date);
+      
+      memories.push({
+        message: `Last Friday at ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}, you spent ₹${lastFridayExpense.amount} on ${lastFridayExpense.description}.`,
+        details: `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} • ${category.name} • #${lastFridayExpense.tags?.join(' #') || 'general'}`
+      });
+    }
+    
+    const today = new Date();
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+    const sameDayLastMonthExpense = appData.expenses.find(e => {
+      const expenseDate = new Date(e.date);
+      return expenseDate.getDate() === lastMonth.getDate() && 
+             expenseDate.getMonth() === lastMonth.getMonth();
+    });
+    
+    if (sameDayLastMonthExpense) {
+      const category = appData.categories.find(c => c.id === sameDayLastMonthExpense.category);
+      const date = new Date(sameDayLastMonthExpense.date);
+      
+      memories.push({
+        message: `On this day last month, you spent ₹${sameDayLastMonthExpense.amount} at ${sameDayLastMonthExpense.description} for ${category.name}.`,
+        details: `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()} • ${category.name} • #${sameDayLastMonthExpense.tags?.join(' #') || 'general'}`
+      });
+    }
+    
+
+    if (memories.length === 0) {
+      memories.push({
+        message: 'Your expense memories will appear here as you track your spending.',
+        details: 'Start adding expenses to see patterns'
+      });
+    }
+    
+
+    memories.forEach(memory => {
+      const memoryEl = document.createElement('div');
+      memoryEl.className = 'memory-card';
+      memoryEl.innerHTML = `
+        <p class="memory-message">${memory.message}</p>
+        <p class="memory-details">${memory.details}</p>
+      `;
+      elements.expenseMemoryList.appendChild(memoryEl);
+    });
+  }
+
+  function highlightActivePeriodButton() {
+    elements.spendingOverviewButtons.forEach(button => {
+      if (!button.querySelector('i')) { 
+        const period = button.textContent.toLowerCase();
+        button.style.fontWeight = appData.spendingPeriod === period ? '600' : '400';
+        button.style.color = appData.spendingPeriod === period ? 'var(--primary-color)' : 'var(--text-color)';
+      }
+    });
+  }
+
+  function updateNotificationBadge() {
+    const unreadCount = appData.notifications.filter(n => !n.read).length;
+    elements.notificationBadge.textContent = unreadCount;
+    elements.notificationBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+  }
+
+  function showNotifications() {
+   
+    alert(`You have ${appData.notifications.length} notifications`);
+  }
+
+  function showAddTransactionModal() {
+    const modalHtml = `
+      <div class="modal-overlay">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Add Transaction</h3>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="transaction-type">Type</label>
+              <select id="transaction-type" class="form-control">
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="transaction-amount">Amount (₹)</label>
+              <input type="number" id="transaction-amount" class="form-control" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label for="transaction-description">Description</label>
+              <input type="text" id="transaction-description" class="form-control" placeholder="What was this for?">
+            </div>
+            <div class="form-group">
+              <label for="transaction-category">Category</label>
+              <select id="transaction-category" class="form-control">
+                ${appData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="transaction-date">Date</label>
+              <input type="date" id="transaction-date" class="form-control" value="${new Date().toISOString().split('T')[0]}">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary close-modal">Cancel</button>
+            <button class="btn btn-primary" id="save-transaction">Save</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+ 
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+   
+    document.querySelectorAll('.close-modal').forEach(btn => {
+      btn.addEventListener('click', closeModal);
+    });
+    
+    document.getElementById('save-transaction').addEventListener('click', saveTransaction);
+    
+  
+    addModalStyles();
+  }
+
+  function closeModal() {
+    document.querySelector('.modal-overlay').remove();
+  }
+
+  function saveTransaction() {
+    const type = document.getElementById('transaction-type').value;
+    const amount = parseFloat(document.getElementById('transaction-amount').value);
+    const description = document.getElementById('transaction-description').value.trim();
+    const category = document.getElementById('transaction-category').value;
+    const date = document.getElementById('transaction-date').value;
+    
+    if (!amount || isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    if (!description) {
+      alert('Please enter a description');
+      return;
+    }
+    
+    const transaction = {
+      id: Date.now(),
+      type,
+      amount: type === 'expense' ? amount : amount,
+      description,
+      category,
+      date,
+      createdAt: new Date().toISOString()
+    };
+    
+    if (type === 'expense') {
+      appData.expenses.push(transaction);
+      appData.balance -= amount;
+    } else {
+      appData.income.push(transaction);
+      appData.balance += amount;
+    }
+    
+    // Add notification
+    appData.notifications.unshift({
+      id: Date.now(),
+      message: `New ${type} added: ${description} (₹${amount})`,
+      type,
+      read: false,
+      date: new Date().toISOString()
+    });
+    
+    saveData();
+    renderAll();
+    closeModal();
+  }
+
+  function addModalStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal {
+        background-color: white;
+        border-radius: 0.5rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .modal-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--medium-gray);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+      .modal-header button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--dark-gray);
+      }
+      .modal-body {
+        padding: 1.5rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--dark-gray);
+      }
+      .form-control {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--medium-gray);
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--medium-gray);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .btn-secondary {
+        background-color: white;
+        border: 1px solid var(--medium-gray);
+        color: var(--text-color);
+      }
+      .btn-primary {
+        background-color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        color: white;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function formatDate(date) {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`;
+    }
+  }
+
+
+  if (appData.expenses.length === 0 && appData.income.length === 0) {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const lastWeek = new Date(today);
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    appData.expenses = [
+      {
+        id: 1,
+        type: 'expense',
+        amount: 350,
+        description: "Dinner at Domino's",
+        category: 'food',
+        date: yesterday.toISOString().split('T')[0],
+        createdAt: yesterday.toISOString()
+      },
+      {
+        id: 2,
+        type: 'expense',
+        amount: 500,
+        description: 'Petrol',
+        category: 'transport',
+        date: today.toISOString().split('T')[0],
+        createdAt: today.toISOString()
+      },
+      {
+        id: 3,
+        type: 'expense',
+        amount: 1250,
+        description: 'Amazon Purchase',
+        category: 'shopping',
+        date: lastWeek.toISOString().split('T')[0],
+        createdAt: lastWeek.toISOString()
+      }
+    ];
+    
+    appData.income = [
+      {
+        id: 4,
+        type: 'income',
+        amount: 30000,
+        description: 'Monthly Salary',
+        category: 'salary',
+        date: today.toISOString().split('T')[0],
+        createdAt: today.toISOString()
+      }
+    ];
+    
+    appData.balance = 24850;
+    appData.monthlyBudget = 20000;
+    appData.notifications = [
+      {
+        id: 1,
+        message: 'Welcome to ExpensePro!',
+        type: 'system',
+        read: false,
+        date: today.toISOString()
+      }
+    ];
+    
+    saveData();
+  }
+});
   </script>
 </body>
 </html>
