@@ -17,7 +17,7 @@
       </div>
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="dashboard.html" class="nav-link active">
+          <a href="dashboard.html" class="nav-link">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </a>
@@ -244,6 +244,293 @@
         });
       });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+  // DOM Elements
+  const reportFilters = document.querySelectorAll('.filter-select');
+  const exportBtn = document.querySelector('.export-btn');
+  const reportCards = document.querySelectorAll('.report-card');
+  const notificationBtn = document.querySelector('.notification-btn');
+  const quickAddBtn = document.querySelector('.quick-add .add-btn');
+  const reportTable = document.querySelector('.report-table tbody');
+
+  // Sample data for reports
+  const reportData = {
+    transactions: [
+      {
+        id: 1,
+        date: '2024-04-15',
+        category: 'Food & Dining',
+        description: 'Dinner at Subway',
+        amount: -500,
+        type: 'Expense'
+      },
+      {
+        id: 2,
+        date: '2024-04-14',
+        category: 'Transportation',
+        description: 'Petrol for scooter',
+        amount: -350,
+        type: 'Expense'
+      },
+      {
+        id: 3,
+        date: '2024-04-12',
+        category: 'Shopping',
+        description: 'New headphones',
+        amount: -1250,
+        type: 'Expense'
+      },
+      {
+        id: 4,
+        date: '2024-04-10',
+        category: 'Salary',
+        description: 'Monthly paycheck',
+        amount: 25000,
+        type: 'Income'
+      },
+      {
+        id: 5,
+        date: '2024-04-05',
+        category: 'Housing',
+        description: 'Electricity bill',
+        amount: -800,
+        type: 'Expense'
+      }
+    ],
+    monthlySpending: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      data: [12000, 15000, 18000, 14000]
+    },
+    categorySpending: {
+      labels: ['Food', 'Transport', 'Shopping', 'Housing', 'Others'],
+      data: [25, 20, 15, 30, 10],
+      colors: ['var(--primary-color)', 'var(--success-color)', 'var(--accent-color)', '#f59e0b', 'var(--error-color)']
+    }
+  };
+
+  // Initialize the page
+  function init() {
+    renderReportData();
+    setupEventListeners();
+    updateCharts();
+  }
+
+  // Set up event listeners
+  function setupEventListeners() {
+    // Report filter changes
+    reportFilters.forEach(filter => {
+      filter.addEventListener('change', handleFilterChange);
+    });
+
+    // Export button
+    exportBtn.addEventListener('click', exportReport);
+
+    // Report card clicks
+    reportCards.forEach(card => {
+      card.addEventListener('click', handleReportCardClick);
+    });
+
+    // Notification button
+    notificationBtn.addEventListener('click', toggleNotifications);
+
+    // Quick add button
+    quickAddBtn.addEventListener('click', showQuickAddMenu);
+  }
+
+  // Handle filter changes
+  function handleFilterChange() {
+    const reportType = document.querySelector('.filter-select:nth-of-type(1)').value;
+    const timePeriod = document.querySelector('.filter-select:nth-of-type(2)').value;
+    
+    console.log(`Report type: ${reportType}, Time period: ${timePeriod}`);
+    // In a real app, this would fetch new data based on filters
+    renderReportData();
+    updateCharts();
+  }
+
+  // Render report data
+  function renderReportData() {
+    // Sort transactions by date (newest first)
+    const sortedTransactions = [...reportData.transactions].sort((a, b) => 
+      new Date(b.date) - new Date(a.date));
+    
+    // Clear existing table rows
+    reportTable.innerHTML = '';
+    
+    // Add new rows
+    sortedTransactions.forEach(transaction => {
+      const row = document.createElement('tr');
+      
+      // Format date
+      const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+      
+      // Format amount with currency symbol
+      const formattedAmount = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0
+      }).format(Math.abs(transaction.amount));
+      
+      row.innerHTML = `
+        <td>${formattedDate}</td>
+        <td><span class="category-badge">${transaction.category}</span></td>
+        <td>${transaction.description}</td>
+        <td class="${transaction.amount < 0 ? 'amount-expense' : 'amount-income'}">
+          ${transaction.amount < 0 ? '-' : '+'}${formattedAmount.replace('₹', '')}
+        </td>
+        <td>${transaction.type}</td>
+      `;
+      
+      reportTable.appendChild(row);
+    });
+  }
+
+  // Update chart visuals (simplified for this example)
+  function updateCharts() {
+    const barChartContainer = document.querySelector('.chart-card:nth-of-type(1) .chart-container');
+    const pieChartContainer = document.querySelector('.chart-card:nth-of-type(2) .chart-container');
+    
+    // Clear existing chart visuals
+    barChartContainer.innerHTML = '';
+    pieChartContainer.innerHTML = '';
+    
+    // Create bar chart visualization
+    const barChart = document.createElement('div');
+    barChart.style.display = 'flex';
+    barChart.style.alignItems = 'flex-end';
+    barChart.style.height = '100%';
+    barChart.style.gap = '10px';
+    barChart.style.paddingTop = '20px';
+    
+    reportData.monthlySpending.data.forEach((value, index) => {
+      const barHeight = (value / Math.max(...reportData.monthlySpending.data)) * 80;
+      const bar = document.createElement('div');
+      bar.style.flex = '1';
+      bar.style.backgroundColor = 'var(--accent-color)';
+      bar.style.height = `${barHeight}%`;
+      bar.style.borderRadius = '4px';
+      bar.style.position = 'relative';
+      
+      // Add value label
+      const label = document.createElement('div');
+      label.textContent = reportData.monthlySpending.labels[index];
+      label.style.position = 'absolute';
+      label.style.bottom = '-20px';
+      label.style.width = '100%';
+      label.style.textAlign = 'center';
+      label.style.fontSize = '12px';
+      
+      bar.appendChild(label);
+      barChart.appendChild(bar);
+    });
+    
+    barChartContainer.appendChild(barChart);
+    
+    // Create pie chart visualization
+    const pieChart = document.createElement('div');
+    pieChart.style.width = '150px';
+    pieChart.style.height = '150px';
+    pieChart.style.borderRadius = '50%';
+    pieChart.style.margin = '20px auto';
+    
+    // Generate conic-gradient for pie chart
+    let conicGradient = '';
+    let accumulatedPercent = 0;
+    
+    reportData.categorySpending.data.forEach((percent, index) => {
+      const color = reportData.categorySpending.colors[index];
+      const startPercent = accumulatedPercent;
+      accumulatedPercent += percent;
+      conicGradient += `${color} ${startPercent}% ${accumulatedPercent}%, `;
+    });
+    
+    pieChart.style.background = `conic-gradient(${conicGradient.slice(0, -2)})`;
+    pieChartContainer.appendChild(pieChart);
+    
+    // Add legend for pie chart
+    const legend = document.createElement('div');
+    legend.style.display = 'flex';
+    legend.style.flexWrap = 'wrap';
+    legend.style.justifyContent = 'center';
+    legend.style.gap = '10px';
+    legend.style.marginTop = '10px';
+    
+    reportData.categorySpending.labels.forEach((label, index) => {
+      const legendItem = document.createElement('div');
+      legendItem.style.display = 'flex';
+      legendItem.style.alignItems = 'center';
+      legendItem.style.fontSize = '12px';
+      
+      const colorBox = document.createElement('div');
+      colorBox.style.width = '12px';
+      colorBox.style.height = '12px';
+      colorBox.style.backgroundColor = reportData.categorySpending.colors[index];
+      colorBox.style.marginRight = '5px';
+      colorBox.style.borderRadius = '2px';
+      
+      legendItem.appendChild(colorBox);
+      legendItem.appendChild(document.createTextNode(`${label} (${reportData.categorySpending.data[index]}%)`));
+      legend.appendChild(legendItem);
+    });
+    
+    pieChartContainer.appendChild(legend);
+  }
+
+  // Handle report card clicks
+  function handleReportCardClick(e) {
+    const card = e.currentTarget;
+    const reportType = card.querySelector('.report-title').textContent;
+    
+    // In a real app, this would load the specific report view
+    console.log(`Loading report: ${reportType}`);
+    
+    // Highlight selected card
+    reportCards.forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    
+    // Update filters based on report type
+    if (reportType === 'Spending Trends') {
+      document.querySelector('.filter-select:nth-of-type(1)').value = 'Monthly Report';
+    } else if (reportType === 'Category Breakdown') {
+      document.querySelector('.filter-select:nth-of-type(1)').value = 'Category Report';
+    } else if (reportType === 'Income vs Expenses') {
+      document.querySelector('.filter-select:nth-of-type(1)').value = 'Income vs Expense';
+    }
+    
+    handleFilterChange();
+  }
+
+  // Export report
+  function exportReport() {
+    const reportType = document.querySelector('.filter-select:nth-of-type(1)').value;
+    const timePeriod = document.querySelector('.filter-select:nth-of-type(2)').value;
+    
+    // In a real app, this would generate a PDF/CSV file
+    console.log(`Exporting ${reportType} for ${timePeriod}`);
+    alert(`Exporting ${reportType} for ${timePeriod} as PDF`);
+  }
+
+  // Toggle notifications
+  function toggleNotifications() {
+    console.log('Notifications clicked');
+    document.querySelector('.notification-badge').textContent = '0';
+  }
+
+  // Show quick add menu
+  function showQuickAddMenu() {
+    // In a real app, this would show a quick add transaction menu
+    console.log('Quick add button clicked');
+    alert('Quick add transaction menu would appear here');
+  }
+
+  // Initialize the app
+  init();
+});
   </script>
 </body>
 </html>

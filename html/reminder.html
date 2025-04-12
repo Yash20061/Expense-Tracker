@@ -17,7 +17,7 @@
       </div>
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="dashboard.html" class="nav-link active">
+          <a href="dashboard.html" class="nav-link">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </a>
@@ -41,7 +41,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="#" class="nav-link active">
             <i class="fas fa-bell"></i>
             <span>Reminders</span>
           </a>
@@ -233,28 +233,6 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Reminders page loaded');
-      
-      // Handle checkbox changes
-      document.querySelectorAll('.reminder-checkbox input').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          const card = this.closest('.reminder-card');
-          if (this.checked) {
-            card.classList.add('completed');
-          } else {
-            card.classList.remove('completed');
-          }
-        });
-      });
-
-      // Add reminder button click handler
-      document.getElementById('addReminderBtn').addEventListener('click', function() {
-        // In a real app, this would show a modal to add a new reminder
-        console.log('Add reminder button clicked');
-      });
-    });
-  </script>
+  <script src="/js/reminder.js"></script>
 </body>
 </html>

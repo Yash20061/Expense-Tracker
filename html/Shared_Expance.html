@@ -359,6 +359,332 @@
         alert(`Preparing to ${action} for ${amount}`);
       });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+  // DOM Elements
+  const newGroupBtn = document.getElementById('newGroupBtn');
+  const newGroupModal = document.getElementById('newGroupModal');
+  const closeModal = document.getElementById('closeModal');
+  const cancelModal = document.getElementById('cancelModal');
+  const notificationBtn = document.querySelector('.notification-btn');
+  const expenseGroupsContainer = document.querySelector('.expense-groups');
+  const createGroupBtn = document.querySelector('.modal-footer .btn-primary');
+
+  // Sample data for shared expenses
+  const sharedExpensesData = {
+    groups: [
+      {
+        id: 1,
+        name: 'Roommates',
+        members: 4,
+        expenses: 12,
+        updated: '2 days ago',
+        expensesList: [
+          {
+            id: 101,
+            description: 'Groceries',
+            amount: 1250,
+            paidBy: { id: 'JS', name: 'You' },
+            date: '2024-01-12',
+            status: 'pending',
+            settled: false
+          },
+          {
+            id: 102,
+            description: 'Internet Bill',
+            amount: 1800,
+            paidBy: { id: 'AK', name: 'Alex' },
+            date: '2024-01-05',
+            status: 'settled',
+            settled: true
+          },
+          {
+            id: 103,
+            description: 'Electricity Bill',
+            amount: 2400,
+            paidBy: { id: 'SM', name: 'Sam' },
+            date: '2024-01-03',
+            status: 'pending',
+            settled: false
+          }
+        ],
+        balance: {
+          youOwe: 850,
+          to: 'Alex',
+          expensesCount: 2
+        }
+      },
+      {
+        id: 2,
+        name: 'Trip to Goa',
+        members: 6,
+        expenses: 8,
+        updated: '1 week ago',
+        expensesList: [
+          {
+            id: 201,
+            description: 'Hotel Booking',
+            amount: 12000,
+            paidBy: { id: 'JS', name: 'You' },
+            date: '2023-12-28',
+            status: 'pending',
+            settled: false
+          },
+          {
+            id: 202,
+            description: 'Flight Tickets',
+            amount: 24500,
+            paidBy: { id: 'PR', name: 'Priya' },
+            date: '2023-12-22',
+            status: 'pending',
+            settled: false
+          }
+        ],
+        balance: {
+          owedToYou: 2000,
+          from: '3 members'
+        }
+      }
+    ]
+  };
+
+  // Initialize the page
+  function init() {
+    renderExpenseGroups();
+    setupEventListeners();
+    updateNotificationBadge();
+  }
+
+  // Set up event listeners
+  function setupEventListeners() {
+    // New group modal
+    newGroupBtn.addEventListener('click', () => newGroupModal.classList.add('active'));
+    closeModal.addEventListener('click', () => newGroupModal.classList.remove('active'));
+    cancelModal.addEventListener('click', () => newGroupModal.classList.remove('active'));
+    window.addEventListener('click', (e) => {
+      if (e.target === newGroupModal) newGroupModal.classList.remove('active');
+    });
+
+    // Create group button
+    createGroupBtn.addEventListener('click', createNewGroup);
+
+    // Notification button
+    notificationBtn.addEventListener('click', toggleNotifications);
+
+    // Event delegation for expense actions
+    expenseGroupsContainer.addEventListener('click', handleExpenseActions);
+  }
+
+  // Render expense groups
+  function renderExpenseGroups() {
+    expenseGroupsContainer.innerHTML = sharedExpensesData.groups.map(group => `
+      <div class="expense-group" data-group-id="${group.id}">
+        <div class="expense-group-header">
+          <div class="expense-group-title">${group.name}</div>
+          <div class="expense-group-meta">
+            <span><i class="fas fa-users"></i> ${group.members} members</span>
+            <span><i class="fas fa-receipt"></i> ${group.expenses} expenses</span>
+            <span><i class="fas fa-clock"></i> Updated ${group.updated}</span>
+          </div>
+        </div>
+        <div class="expense-group-body">
+          <table class="expense-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Paid by</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${group.expensesList.map(expense => `
+                <tr data-expense-id="${expense.id}">
+                  <td>${expense.description}</td>
+                  <td class="expense-amount">₹${expense.amount.toLocaleString('en-IN')}</td>
+                  <td>
+                    <div class="expense-paid-by">
+                      <div class="user-avatar-small">${expense.paidBy.id}</div>
+                      ${expense.paidBy.name}
+                    </div>
+                  </td>
+                  <td>${formatDate(expense.date)}</td>
+                  <td>
+                    <span class="expense-status status-${expense.status}">
+                      ${expense.status.charAt(0).toUpperCase() + expense.status.slice(1)}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="expense-actions">
+                      <button class="action-btn"><i class="fas fa-edit"></i></button>
+                      <button class="action-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="settle-up-section">
+          ${group.balance.youOwe ? `
+            <div class="settle-up-info">
+              <div class="user-avatar-small">${group.balance.to.substring(0, 2).toUpperCase()}</div>
+              <div>
+                <div>You owe <span class="settle-up-amount">₹${group.balance.youOwe.toLocaleString('en-IN')}</span></div>
+                <div class="settle-up-details">to ${group.balance.to} for ${group.balance.expensesCount} expenses</div>
+              </div>
+            </div>
+            <button class="btn btn-primary settle-up-btn">
+              <i class="fas fa-exchange-alt"></i> Settle Up
+            </button>
+          ` : `
+            <div class="settle-up-info">
+              <div class="user-avatar-small">${group.balance.from.substring(0, 2).toUpperCase()}</div>
+              <div>
+                <div>You are owed <span class="settle-up-amount">₹${group.balance.owedToYou.toLocaleString('en-IN')}</span></div>
+                <div class="settle-up-details">from ${group.balance.from}</div>
+              </div>
+            </div>
+            <button class="btn btn-primary request-payment-btn">
+              <i class="fas fa-exchange-alt"></i> Request Payment
+            </button>
+          `}
+        </div>
+      </div>
+    `).join('');
+
+    // Add event listeners to settle up/request payment buttons
+    document.querySelectorAll('.settle-up-btn, .request-payment-btn').forEach(btn => {
+      btn.addEventListener('click', handleSettleUp);
+    });
+  }
+
+  // Handle expense actions (edit/delete)
+  function handleExpenseActions(e) {
+    const actionBtn = e.target.closest('.action-btn');
+    if (!actionBtn) return;
+
+    const expenseRow = actionBtn.closest('tr');
+    const expenseId = parseInt(expenseRow.dataset.expenseId);
+    const groupId = parseInt(expenseRow.closest('.expense-group').dataset.groupId);
+    const expense = findExpense(groupId, expenseId);
+
+    if (actionBtn.querySelector('.fa-edit')) {
+      editExpense(expense);
+    } else if (actionBtn.querySelector('.fa-trash')) {
+      deleteExpense(groupId, expenseId);
+    }
+  }
+
+  // Handle settle up/request payment
+  function handleSettleUp(e) {
+    const settleUpSection = e.target.closest('.settle-up-section');
+    const amount = settleUpSection.querySelector('.settle-up-amount').textContent;
+    const isRequest = e.target.classList.contains('request-payment-btn');
+    const groupId = parseInt(e.target.closest('.expense-group').dataset.groupId);
+
+    if (isRequest) {
+      alert(`Requesting payment of ${amount} from group members`);
+      // In a real app, this would trigger a payment request
+    } else {
+      if (confirm(`Are you sure you want to settle up ${amount}?`)) {
+        alert(`Processing payment of ${amount}`);
+        // Mark relevant expenses as settled
+        const group = sharedExpensesData.groups.find(g => g.id === groupId);
+        group.expensesList.forEach(expense => {
+          if (!expense.settled && expense.paidBy.id !== 'JS') {
+            expense.settled = true;
+            expense.status = 'settled';
+          }
+        });
+        renderExpenseGroups();
+      }
+    }
+  }
+
+  // Edit an expense
+  function editExpense(expense) {
+    // In a real app, this would show an edit modal
+    const newDescription = prompt('Edit expense description:', expense.description);
+    if (newDescription && newDescription.trim() !== '') {
+      expense.description = newDescription.trim();
+      renderExpenseGroups();
+    }
+  }
+
+  // Delete an expense
+  function deleteExpense(groupId, expenseId) {
+    if (confirm('Are you sure you want to delete this expense?')) {
+      const group = sharedExpensesData.groups.find(g => g.id === groupId);
+      group.expensesList = group.expensesList.filter(e => e.id !== expenseId);
+      group.expenses = group.expensesList.length;
+      renderExpenseGroups();
+    }
+  }
+
+  // Create new group
+  function createNewGroup() {
+    const groupName = document.querySelector('#newGroupModal input[type="text"]').value;
+    if (!groupName.trim()) {
+      alert('Please enter a group name');
+      return;
+    }
+
+    const newGroup = {
+      id: Date.now(),
+      name: groupName,
+      members: 1, // Default to current user
+      expenses: 0,
+      updated: 'just now',
+      expensesList: [],
+      balance: {
+        youOwe: 0,
+        owedToYou: 0
+      }
+    };
+
+    sharedExpensesData.groups.unshift(newGroup);
+    newGroupModal.classList.remove('active');
+    renderExpenseGroups();
+  }
+
+  // Toggle notifications
+  function toggleNotifications() {
+    console.log('Notifications clicked');
+    document.querySelector('.notification-badge').textContent = '0';
+  }
+
+  // Update notification badge
+  function updateNotificationBadge() {
+    const pendingExpenses = sharedExpensesData.groups.reduce((count, group) => {
+      return count + group.expensesList.filter(e => !e.settled && e.paidBy.id !== 'JS').length;
+    }, 0);
+    
+    document.querySelector('.notification-badge').textContent = 
+      pendingExpenses > 0 ? pendingExpenses : '';
+  }
+
+  // Helper function to find an expense
+  function findExpense(groupId, expenseId) {
+    const group = sharedExpensesData.groups.find(g => g.id === groupId);
+    return group.expensesList.find(e => e.id === expenseId);
+  }
+
+  // Helper function to format date
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  // Initialize the app
+  init();
+});
   </script>
 </body>
 </html>
